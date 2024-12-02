@@ -88,7 +88,8 @@ echo 'starting up services with docker' &&
 # start up services
 docker compose -f docker-compose.yml up -d &&
 
-# wait 60 seconds for services to finalize
+# wait 60 seconds for services to initialize
+echo 'waiting for services to finish initializing...' &&
 sleep 60 && 
 
 # end script and display access directions
@@ -96,7 +97,7 @@ source ./env/.server.env &&
 echo 'Cursion should be up and running!' && 
 echo 'Access the Client App here -> ${CLIENT_URL_ROOT}/login' && 
 echo 'Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin' && 
-echo 'Use your admin credentials to login: (${ADMIN_USER}) & (${ADMIN_PASS})' &&
+echo 'Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}' &&
 
 # exit scipt
 exit 0
