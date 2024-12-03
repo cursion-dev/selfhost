@@ -1,10 +1,9 @@
-import typer, os, json, time, shutil, secrets
+import typer, os, json, time, shutil, secrets, base64
 from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
 from pprint import pprint
 from rich import print as rprint
-from .api import *
 
 
 # High Level Configs
@@ -88,7 +87,8 @@ def setup() -> None:
 
     # generate keys and passwords
     db_password = secrets.token_urlsafe(12)
-    secret_key = secrets.secrets.token_bytes(32)
+    random_key = secrets.token_bytes(32)
+    secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
     
     # update SERVER vars
     SERVER_VARS['DB_PASS']           = db_password
@@ -107,9 +107,9 @@ def setup() -> None:
 
         # get all API data
         api_data = requests.post(
-            url=f'{cursion_root}/v1/auth/license', 
+            url=f'{cursion_root}/v1/auth/account/license', 
             headers=headers,
-            data=json.dump({'key': license_key})
+            data=json.dump({'license_key': license_key})
         ).json()
 
         # update all api data in SERVER vars
