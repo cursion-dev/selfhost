@@ -26,9 +26,6 @@ useradd -m cursion && echo $USER_PASS | passwd --stdin username &&
 usermod -aG sudo cursion &&
 su cursion &&
 
-# check and install curl 
-curl --version || apt-get install git curl -y &&
-
 # check and install git
 git --version || apt-get install git -y &&
 
@@ -79,6 +76,7 @@ python3 ./setup/installer/installer.py &&
 
 # deactivate venv
 deactivate && 
+
 
 
 
