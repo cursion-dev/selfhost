@@ -88,7 +88,15 @@ docker compose -f docker-compose.yml up -d &&
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...' &&
-sleep 60 && 
+
+i=0
+progress='####################' # 20 long
+while [[ $i -le 10 ]]; do
+    echo -ne "${progress:0:$((i*2))}  ($((i*10))%)\r"
+    sleep 6
+    ((i++))
+done
+echo -e "\n"
 
 # end script and display access directions
 source ./env/.server.env && 
