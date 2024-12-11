@@ -6,6 +6,7 @@ services:
     hostname: cursion-client
     image: cursiondev/client
     platform: linux/amd64
+    pull_policy: always
     env_file:
       - ./env/.client.env
     expose:
@@ -17,6 +18,7 @@ services:
     hostname: cursion-server
     image: cursiondev/server
     platform: linux/amd64
+    pull_policy: always
     restart: always
     privileged: true
     init: true
@@ -59,6 +61,7 @@ services:
     hostname: cursion-celery
     image: cursiondev/server
     platform: linux/amd64
+    pull_policy: always
     privileged: true
     restart: always
     entrypoint: ["/entrypoint.sh", "celery"]
@@ -78,6 +81,7 @@ services:
     image: cursiondev/server
     platform: linux/amd64
     privileged: true
+    pull_policy: always
     restart: always
     entrypoint: ["/entrypoint.sh", "beat"]
     volumes:
@@ -95,6 +99,7 @@ services:
     container_name: yellowlab
     hostname: yellowlab
     image: cursiondev/ylt
+    pull_policy: always
     platform: linux/amd64
     privileged: true
     restart: always
@@ -111,6 +116,7 @@ services:
     container_name: nginx-proxy
     hostname: nginx-proxy
     image: cursiondev/nginx
+    pull_policy: always
     platform: linux/amd64
     restart: always
     ports:
