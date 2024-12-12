@@ -15,14 +15,14 @@ apt update &&
 
 # set user password
 USER_PASS="cursion1234!"
-if [[ $1 != $USER_PASS ]]
-    then
-        USER_PASS=$1 &&
-        echo 'updated USER_PASS'
-fi
+# if [[ $1 != $USER_PASS ]]
+#     then
+#         USER_PASS=$1 &&
+#         echo 'updated USER_PASS'
+# fi
 
 # create new user 
-useradd -m cursion && echo $USER_PASS | passwd --stdin username &&
+useradd -m cursion && echo $USER_PASS | passwd --stdin cursion &&
 usermod -aG sudo cursion &&
 su cursion &&
 
