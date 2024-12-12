@@ -14,7 +14,7 @@ env_client_old = Path(str(Path.home()) + '/cursion/env/.client.example.env')
 env_server_old = Path(str(Path.home()) + '/cursion/env/.server.example.env')
 env_client = Path(str(Path.home()) + '/cursion/env/.client.env')
 env_server = Path(str(Path.home()) + '/cursion/env/.server.env')
-cursion_root = 'https://dev.cursion.dev'
+cursion_root = 'https://api.cursion.dev'
 
 
 SERVER_VARS = {
