@@ -55,9 +55,6 @@ docker --version || {
     
     # install new docker
     apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-    # confirm install
-    docker run hello-world
 } &&
 
 # switch to cursion user
