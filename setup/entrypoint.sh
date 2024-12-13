@@ -66,29 +66,37 @@ docker --version || {
 
 
 # --- 1. Get self-hosted repo --- #
-echo 'downloading Cursion Self-Hosted repo' &&
+echo 'downloading Cursion Self-Hosted repo'
 
 # create cursion dir
-mkdir -p $DIR && cd $DIR && 
+mkdir -p $DIR && cd $DIR
 
 # clone self-hosted repo
-git clone $REPOSITORY &&
+if [ -d "./selfhost" ]; then
+    echo "Repository already exists. Pulling the latest changes..."
+    cd selfhost
+    git pull
+else
+    echo "Cloning the repository..."
+    git clone $REPOSITORY
+    cd selfhost
+fi
 
 # # setup & activate python venv
 # python3 -m venv appenv && 
 # source appenv/bin/activate &&
 
 # install requirements
-python3 -m pip3 install -r ./setup/installer/requirements.txt &&
+python3 -m pip3 install -r ./setup/installer/requirements.txt
 
 
 
 
 # --- 2. Run python installer to get User inputs --- #
-echo 'starting up installer' &&
+echo 'starting up installer'
 
 # init installer.py setup script
-python3 ./setup/installer/installer.py &&
+python3 ./setup/installer/installer.py
 
 # # deactivate venv
 # deactivate && 
@@ -97,13 +105,13 @@ python3 ./setup/installer/installer.py &&
 
 
 # --- 3. Spin up Cursion using docker compose --- #
-echo 'starting up services with docker' &&
+echo 'starting up services with docker'
 
 # start up services
-docker compose -f docker-compose.yml up -d &&
+docker compose -f docker-compose.yml up -d
 
 # wait 60 seconds for services to initialize
-echo 'waiting for services to finish initializing...' &&
+echo 'waiting for services to finish initializing...'
 
 i=0
 progress='####################' # 20 long
@@ -121,9 +129,9 @@ echo -e "\n"
 # end script and display access directions
 export $(grep -v '^#' ./env/.server.env | xargs)
 echo "Cursion should be up and running!" && 
-echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login" && 
-echo "Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin" && 
-echo "Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}" &&
+echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login" 
+echo "Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin" 
+echo "Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}"
 
 # exit scipt
 exit 0
