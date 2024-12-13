@@ -109,10 +109,6 @@ else
     cd selfhost
 fi
 
-# Set ownership & permissions for the `cursion` user
-chown -R $USR:$USR /root/cursion
-chmod -R 755 /root/cursion
-
 
 
 
@@ -139,6 +135,13 @@ deactivate
 
 # --- 4. Spin up Cursion using docker compose --- #
 echo 'starting up services with docker'
+
+# Set ownership & permissions for the `cursion` user
+chown -R $USR:$USR /root/cursion/selfhost
+chmod -R 755 /root/cursion/selfhost
+
+# adding extra permissions for docker cmds
+echo "$USR ALL=(ALL) NOPASSWD: /usr/bin/docker" | sudo tee -a /etc/sudoers
 
 # start up services
 sudo -u $USR docker compose -f docker-compose.yml up -d
