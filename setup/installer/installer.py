@@ -305,5 +305,5 @@ def update_env(env_path: str, variables: dict) -> None:
 
 
 ## --- Installer entry point --- ##
-def root():
+if __name__ == '__main__':
     app()
