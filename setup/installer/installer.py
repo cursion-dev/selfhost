@@ -132,19 +132,12 @@ def setup() -> None:
                 '[/red bold]' +
                 ' incorrect license key'
             )
-
-    # flush prompts
-    sys.stdout.flush()
    
     # ask for admin email
-    admin_email = typer.prompt('  Enter an admin email address')
-    # # admin_email = input('   Enter an admin email address: ')
+    # admin_email = typer.prompt('  Enter an admin email address')
+    admin_email = input('   Enter an admin email address: ')
     # sys.stdout.write('  Enter an admin email address: ')
-    # sys.stdout.flush()
     # admin_email = input().strip()
-    
-    # flush prompts
-    sys.stdout.flush()
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
