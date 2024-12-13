@@ -84,8 +84,8 @@ def setup() -> None:
     secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
     
     # update SERVER vars
-    SERVER_VARS['DB_PASS']           = db_password
-    SERVER_VARS['POSTGRES_PASSWORD'] = db_password
+    SERVER_VARS['DB_PASS']           = 'supersecretpassword'
+    SERVER_VARS['POSTGRES_PASSWORD'] = 'supersecretpassword'
     SERVER_VARS['SECRETS_KEY']       = secret_key
 
     
