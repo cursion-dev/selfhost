@@ -55,7 +55,7 @@ fi
 echo 'installing system dependencies'
  
 # install dependencies
-apt-get updaten && apt-get install -y ca-certificates python3 python3-pip python3-venv
+apt-get update && apt-get install -y ca-certificates python3 python3-pip python3-venv
 
 # check and install docker
 set +e
@@ -108,6 +108,10 @@ else
     git clone $REPOSITORY
     cd selfhost
 fi
+
+# Set ownership & permissions for the `cursion` user
+chown -R $USR:$USR /root/cursion
+chmod -R 755 /root/cursion
 
 
 
