@@ -16,7 +16,6 @@ echo 'setting up host environment'
 
 # set default vars
 USR="cursion"
-USER_PASS=""
 DIR="cursion"
 REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 
