@@ -144,7 +144,7 @@ chmod -R 755 /root/cursion/selfhost
 echo "$USR ALL=(ALL) NOPASSWD: /usr/bin/docker" | sudo tee -a /etc/sudoers
 
 # start up services
-sudo -u $USR docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...'
