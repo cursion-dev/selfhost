@@ -39,7 +39,7 @@ REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 # fi
 
 # install dependencies
-apt-get install -y ca-certificates python3
+apt-get install -y ca-certificates python3 python3-pip
 
 # check and install docker
 docker --version || { 
@@ -79,7 +79,7 @@ git clone $REPOSITORY &&
 # source appenv/bin/activate &&
 
 # install requirements
-python3 -m pip install -r ./setup/installer/requirements.txt &&
+python3 -m pip3 install -r ./setup/installer/requirements.txt &&
 
 
 
