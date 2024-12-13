@@ -24,13 +24,20 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # install dialog if it's not installed
-if ! command -v dialog &>/dev/null; then
-    apt-get install -y dialog
-fi
+# if ! command -v dialog &>/dev/null; then
+#     apt-get install -y dialog
+# fi
 
 # created password for cursion user using dialog
-USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "create a password for the cursion user" 8 40 2>&1 >/dev/tty)
-USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "confirm the password" 8 40 2>&1 >/dev/tty)
+# USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "create a password for the cursion user" 8 40 2>&1 >/dev/tty)
+# USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "confirm the password" 8 40 2>&1 >/dev/tty)
+
+stty -echo
+read -p "Please create a password for the cursion user: " USER_PASS
+echo
+read -p "Please confirm the password: " USER_PASS_CONFIRM
+echo
+stty echo
 
 # matching password
 if [[ "$USER_PASS" != "$USER_PASS_CONFIRM" ]]; then
