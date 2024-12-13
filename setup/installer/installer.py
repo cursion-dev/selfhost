@@ -1,6 +1,6 @@
 from pathlib import Path
 from rich import print as rprint
-import typer, os, json, time, shutil, secrets, base64, requests
+import typer, os, json, time, shutil, secrets, base64, requests, sys
 
 
 # High Level Configs
@@ -135,9 +135,7 @@ def setup() -> None:
 
    
     # ask for admin email
-    admin_email = typer.prompt(
-        text='  Enter an admin email address', 
-    )
+    admin_email = typer.prompt('  Enter an admin email address')
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
@@ -149,6 +147,9 @@ def setup() -> None:
 
     # get admin password inputs
     while not admin_confirmed:
+
+        # flush prompts
+        sys.stdout.flush()
 
         # ask for admin password
         pass_1 = typer.prompt(
