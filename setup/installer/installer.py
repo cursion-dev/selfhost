@@ -133,13 +133,11 @@ def setup() -> None:
                 ' incorrect license key'
             )
    
+
     # ask for admin email
     admin_email = typer.prompt(
         text='  Enter an admin email address'
     )
-    # admin_email = input('   Enter an admin email address: ')
-    # sys.stdout.write('  Enter an admin email address: ')
-    # admin_email = input().strip()
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
@@ -160,18 +158,12 @@ def setup() -> None:
             text='  Create an admin password', 
             hide_input=True
         )
-        # sys.stdout.write('  Create an admin password: ')
-        # sys.stdout.flush()
-        # pass_1 = input().strip()
 
         # confirm admin pass
         pass_2 = typer.prompt(
             text='  Confirm admin password', 
             hide_input=True
         )
-        # sys.stdout.write('  Confirm the admin password: ')
-        # sys.stdout.flush()
-        # pass_2 = input().strip()
 
         # check password
         admin_confirmed = pass_1 == pass_2
@@ -318,3 +310,4 @@ def update_env(env_path: str, variables: dict) -> None:
 ## --- Installer entry point --- ##
 if __name__ == '__main__':
     app()
+    sys.exit(0)
