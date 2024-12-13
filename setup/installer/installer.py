@@ -259,7 +259,7 @@ def setup() -> None:
         f" Configuration complete!"
     )
     
-    return None
+    sys.exit(0)
 
 
 
@@ -310,4 +310,3 @@ def update_env(env_path: str, variables: dict) -> None:
 ## --- Installer entry point --- ##
 if __name__ == '__main__':
     app()
-    sys.exit(0)
