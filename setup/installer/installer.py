@@ -1,9 +1,6 @@
-import typer, os, json, time, shutil, secrets, base64
 from pathlib import Path
-from typing import List
-from dotenv import load_dotenv
-from pprint import pprint
 from rich import print as rprint
+import typer, os, json, time, shutil, secrets, base64, requests
 
 
 # High Level Configs
