@@ -83,8 +83,8 @@ else
 fi
 
 # setup & activate python venv
-python3 -m venv appenv && 
-source appenv/bin/activate &&
+python3 -m venv appenv
+source appenv/bin/activate
 
 # install requirements
 pip3 install -r ./setup/installer/requirements.txt
@@ -99,7 +99,7 @@ echo 'starting up installer'
 python3 ./setup/installer/installer.py
 
 # deactivate venv
-deactivate && 
+deactivate
 
 
 

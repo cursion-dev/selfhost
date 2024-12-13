@@ -133,6 +133,8 @@ def setup() -> None:
                 ' incorrect license key'
             )
 
+    # flush prompts
+    sys.stdout.flush()
    
     # ask for admin email
     admin_email = typer.prompt('  Enter an admin email address')
@@ -193,6 +195,9 @@ def setup() -> None:
     # get domain name inputs
     while not domains_confirmed:
 
+        # flush prompts
+        sys.stdout.flush()
+
         # ask for server domain name
         server_domain = typer.prompt(
             text='  Enter your Server domain (e.g. api.example.com)', 
@@ -208,6 +213,9 @@ def setup() -> None:
         client_domain = client_domain.replace('/','')
         server_url = f'https://{server_domain}'
         client_url = f'https://{client_domain}'
+
+        # flush prompts
+        sys.stdout.flush()
 
         # ask for CLIENT url change request
         domains_confirmed = typer.confirm(
