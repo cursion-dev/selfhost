@@ -116,9 +116,9 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                u'\u2714' +
+                '[✔️]' +
                 '[/green bold]'+
-                f" License is verified"
+                f' License is verified'
             )
 
             # set verified -> True
@@ -128,7 +128,7 @@ def setup() -> None:
             # incorrect key
             rprint(
                 '[red bold]' +
-                u'\u2718' +
+                '[✘]' +
                 '[/red bold]' +
                 ' incorrect license key'
             )
@@ -138,7 +138,13 @@ def setup() -> None:
    
     # ask for admin email
     # admin_email = typer.prompt('  Enter an admin email address')
-    admin_email = input('   Enter an admin email address: ')
+    # admin_email = input('   Enter an admin email address: ')
+    sys.stdout.write('  Enter an admin email address: ')
+    sys.stdout.flush()
+    admin_email = input().strip()
+    
+    # flush prompts
+    sys.stdout.flush()
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
@@ -155,16 +161,22 @@ def setup() -> None:
         sys.stdout.flush()
 
         # ask for admin password
-        pass_1 = typer.prompt(
-            text='  Create an admin password', 
-            hide_input=True
-        )
+        # pass_1 = typer.prompt(
+        #     text='  Create an admin password', 
+        #     hide_input=True
+        # )
+        sys.stdout.write('  Create an admin password: ')
+        sys.stdout.flush()
+        pass_1 = input().strip()
 
         # confirm admin pass
-        pass_2 = typer.prompt(
-            text='  Confirm admin password', 
-            hide_input=True
-        )
+        # pass_2 = typer.prompt(
+        #     text='  Confirm admin password', 
+        #     hide_input=True
+        # )
+        sys.stdout.write('  Confirm the admin password: ')
+        sys.stdout.flush()
+        pass_2 = input().strip()
 
         # check password
         admin_confirmed = pass_1 == pass_2
@@ -175,7 +187,7 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                u'\u2714' +
+                '[✔️]' +
                 '[/green bold]'+
                 f' Credentials updated:\n' +
                 f'  username    : admin\n' +
@@ -187,7 +199,7 @@ def setup() -> None:
             # incorrect key
             rprint(
                 '[red bold]' +
-                u'\u2718' +
+                '[✘]' +
                 '[/red bold]' +
                 ' passwords do not match'
             )
@@ -240,7 +252,7 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                u'\u2714' +
+                '[✔️]' +
                 '[/green bold]'+
                 f" Domains updated"
             )
@@ -255,7 +267,7 @@ def setup() -> None:
     # print response
     rprint(
         '[green bold]' +
-        u'\u2714' +
+        '[✔️]' +
         '[/green bold]'+
         f" Configuration complete!"
     )
