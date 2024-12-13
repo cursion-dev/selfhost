@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from pathlib import Path
 from rich import print as rprint
 import typer, os, json, time, shutil, secrets, base64, requests, sys
