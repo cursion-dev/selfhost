@@ -6,9 +6,10 @@ import typer, os, json, time, shutil, secrets, base64, requests, sys
 # High Level Configs
 
 app = typer.Typer()
-env_dir = Path(str(Path.home()) + '/cursion/selfhost/env')
-env_client = Path(str(Path.home()) + '/cursion/selfhost/env/.client.env')
-env_server = Path(str(Path.home()) + '/cursion/selfhost/env/.server.env')
+local = '' # testing path -> /documents/coding
+env_dir = Path(str(Path.home()) + f'{local}/cursion/selfhost/env')
+env_client = Path(str(Path.home()) + f'{local}/cursion/selfhost/env/.client.env')
+env_server = Path(str(Path.home()) + f'{local}/cursion/selfhost/env/.server.env')
 cursion_root = 'https://api.cursion.dev'
 
 
@@ -108,7 +109,7 @@ def setup() -> None:
             
             data = api_data.get('data')
             for key in data:
-                if SERVER_VARS.get(key):
+                if key in SERVER_VARS:
                     SERVER_VARS[key] = data[key]
 
             # add license_key to SERVER vars
@@ -170,7 +171,7 @@ def setup() -> None:
         
         # update admin creds for SERVER & CLIENT vars
         if admin_confirmed:
-            SERVER_VARS['ADMIN_PASSWORD'] = pass_1
+            SERVER_VARS['ADMIN_PASS'] = pass_1
 
             rprint(
                 '[green bold]' +
@@ -195,9 +196,6 @@ def setup() -> None:
     # get domain name inputs
     while not domains_confirmed:
 
-        # flush prompts
-        sys.stdout.flush()
-
         # ask for server domain name
         server_domain = typer.prompt(
             text='  Enter your Server domain (e.g. api.example.com)', 
@@ -214,8 +212,6 @@ def setup() -> None:
         server_url = f'https://{server_domain}'
         client_url = f'https://{client_domain}'
 
-        # flush prompts
-        sys.stdout.flush()
 
         # ask for CLIENT url change request
         domains_confirmed = typer.confirm(
@@ -265,42 +261,41 @@ def setup() -> None:
 
 
 def update_env(env_path: str, variables: dict) -> None:
-
     """
     Updates or adds variables in passed .env file
     """
 
-    # set default
+    # read the current .env file content into memory
+    with open(env_path, 'r') as file:
+        lines = file.readlines()
+
+    # create a dictionary to hold the current .env variables
+    current_vars = {}
+    for line in lines:
+        # Ignore comments and empty lines
+        if '=' in line and not line.startswith('#'):
+            key, value = line.strip().split('=', 1)
+            current_vars[key] = value
+
+    # set default to the updated content
     updated_lines = []
 
-    # Read the .env file and update the variable
-    with open(env_path, 'r') as file:
+    # iterate over the variables and either update or add them
+    for key, value in variables.items():
+        if key in current_vars:
+            # Update the existing variable
+            updated_lines.append(f'{key}={value}\n')
+        else:
+            # Add the new variable
+            updated_lines.append(f'{key}={value}\n')
 
-        # iterate through each key in variables
-        for key in variables:
-            
-            # set default
-            var_found = False
+    # add the unchanged lines from the original file
+    for line in lines:
+        # only add lines that are not part of the variables to update
+        if '=' not in line or line.startswith('#'):
+            updated_lines.append(line)
 
-            # iterate through each line
-            for line in file:
-
-                # check if the line starts with the variable key
-                if line.startswith(f'{key}='):
-                    
-                    # add new line with updated value
-                    updated_lines.append(f'{key}={variables[key]}\n')
-                    var_found = True
-                
-                # add line as it is
-                elif line not in updated_lines:
-                    updated_lines.append(line)
-    
-            # Add the variable if it was not found
-            if not var_found:
-                updated_lines.append(f'{key}={variables[key]}\n')
-        
-    # Write the updated content back to the file
+    # write the updated content back to the .env file
     with open(env_path, 'w') as file:
         file.writelines(updated_lines)
 

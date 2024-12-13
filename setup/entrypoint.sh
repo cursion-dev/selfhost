@@ -125,7 +125,7 @@ pip3 install -r ./setup/installer/requirements.txt
 echo 'starting installer script'
 
 # init installer.py setup script
-PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
+PYTHONUNBUFFERED=1 python3 ./setup/installer/installer.py
 
 # deactivate venv
 deactivate
