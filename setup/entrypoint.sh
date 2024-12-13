@@ -136,7 +136,7 @@ echo 'starting up services with docker'
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 # start up services
-sudo -u $USR docker compose -f docker-compose.yml up -d
+su - $USR -c "docker compose -f /home/$USR/$DIR/selfhost/docker-compose.yml up -d"
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...'
