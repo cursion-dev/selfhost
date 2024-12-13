@@ -118,22 +118,13 @@ fi
 # --- 3. Run python installer to get User inputs --- #
 echo 'setting up installer'
 
-# Setup & activate python venv
-python3 -m venv /home/$USR/app/selfhost/appenv
-source /home/$USR/app/selfhost/appenv/bin/activate
-
 # Install requirements (allow --break-system-packages if needed)
 pip3 install -r ./setup/installer/requirements.txt --break-system-packages
 
 echo 'starting installer script'
 
 # Run installer.py setup script
-PYTHONUNBUFFERED=1 /home/$USR/app/selfhost/appenv/bin/python ./setup/installer/installer.py </dev/tty
-
-# Deactivate venv if active
-if [[ "$VIRTUAL_ENV" != "" ]]; then
-    deactivate
-fi
+PYTHONUNBUFFERED=1 ./setup/installer/installer.py </dev/tty
 
 
 
