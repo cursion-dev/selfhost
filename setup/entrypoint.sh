@@ -119,29 +119,20 @@ chmod -R 755 /root/cursion
 # --- 3. Run python installer to get User inputs --- #
 echo 'setting up installer'
 
-sudo -u $USR bash -c "
-    python3 -m venv appenv
-    source appenv/bin/activate
-    pip3 install -r ./setup/installer/requirements.txt
-    echo 'starting installer script'
-    PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
-    deactivate
-"
+# setup & activate python venv
+python3 -m venv appenv
+source appenv/bin/activate
 
-# # setup & activate python venv
-# python3 -m venv appenv
-# source appenv/bin/activate
+# install requirements
+pip3 install -r ./setup/installer/requirements.txt
 
-# # install requirements
-# pip3 install -r ./setup/installer/requirements.txt
+echo 'starting installer script'
 
-# echo 'starting installer script'
+# init installer.py setup script
+PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
 
-# # init installer.py setup script
-# PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
-
-# # deactivate venv
-# deactivate
+# deactivate venv
+deactivate
 
 
 
