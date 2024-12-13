@@ -7,8 +7,6 @@ import typer, os, json, time, shutil, secrets, base64, requests
 
 app = typer.Typer()
 env_dir = Path(str(Path.home()) + '/cursion/selfhost/env')
-env_client_old = Path(str(Path.home()) + '/cursion/selfhost/env/.client.example.env')
-env_server_old = Path(str(Path.home()) + '/cursion/selfhost/env/.server.example.env')
 env_client = Path(str(Path.home()) + '/cursion/selfhost/env/.client.env')
 env_server = Path(str(Path.home()) + '/cursion/selfhost/env/.server.env')
 cursion_root = 'https://api.cursion.dev'
@@ -71,10 +69,6 @@ def setup() -> None:
     """ 
     Setup and configure env's for Client and Server
     """
-
-    # rename each .env file
-    env_client_old.rename(env_client)
-    env_server_old.rename(env_server)
 
     # set defaults
     ready = False
