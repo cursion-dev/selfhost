@@ -137,7 +137,8 @@ def setup() -> None:
     sys.stdout.flush()
    
     # ask for admin email
-    admin_email = typer.prompt('  Enter an admin email address')
+    # admin_email = typer.prompt('  Enter an admin email address')
+    admin_email = input('   Enter an admin email address: ')
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
