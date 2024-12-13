@@ -71,7 +71,7 @@ def setup() -> None:
     """
 
     # set defaults
-    ready = False
+    verified = False
     admin_confirmed = False
     domains_confirmed = False
     headers = {'content-type': 'application/json'}
@@ -88,7 +88,7 @@ def setup() -> None:
 
     
     # get license key and API data
-    while not ready:
+    while not verified:
 
         # ask for license key
         license_key = typer.prompt(
@@ -121,8 +121,8 @@ def setup() -> None:
                 f" License is verified"
             )
 
-            # set ready -> True
-            ready = True
+            # set verified -> True
+            verified = True
     
         else:
             # incorrect key
@@ -138,6 +138,14 @@ def setup() -> None:
     admin_email = typer.prompt(
         text='  Enter an admin email address', 
     )
+    
+    # update email and add username
+    SERVER_VARS['ADMIN_USER'] = 'admin'
+    SERVER_VARS['ADMIN_EMAIL'] = admin_email
+    SERVER_VARS['DEFAULT_EMAIL'] = admin_email
+    SERVER_VARS['LETSENCRYPT_EMAIL'] = admin_email
+    CLIENT_VARS['LETSENCRYPT_EMAIL'] = admin_email
+
 
     # get admin password inputs
     while not admin_confirmed:
@@ -159,12 +167,7 @@ def setup() -> None:
         
         # update admin creds for SERVER & CLIENT vars
         if admin_confirmed:
-            SERVER_VARS['ADMIN_USER'] = 'admin'
-            SERVER_VARS['ADMIN_EMAIL'] = admin_email
             SERVER_VARS['ADMIN_PASSWORD'] = pass_1
-            SERVER_VARS['DEFAULT_EMAIL'] = admin_email
-            SERVER_VARS['LETSENCRYPT_EMAIL'] = admin_email
-            CLIENT_VARS['LETSENCRYPT_EMAIL'] = admin_email
 
             rprint(
                 '[green bold]' +
@@ -191,12 +194,12 @@ def setup() -> None:
 
         # ask for server domain name
         server_domain = typer.prompt(
-            text='  Enter your Server domain (i.e. api.example.com)', 
+            text='  Enter your Server domain (e.g. api.example.com)', 
         )
         
         # ask for client domain name
         client_domain = typer.prompt(
-            text='  Enter your Client domain (i.e. app.example.com)', 
+            text='  Enter your Client domain (e.g. app.example.com)', 
         )
 
         # clean urls
