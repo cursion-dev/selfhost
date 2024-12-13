@@ -45,17 +45,10 @@ else
     echo "User $USR already exists"
 fi
 
-# running remaining script as $USR
-if [ "$(id -u)" -eq 0 ]; then
-    sudo -u $USR bash "$0" "$@"
-    exit
-fi
-
 
 
 
 # --- 1. Install sys dependencies --- #
-
 echo 'installing system dependencies'
  
 # install dependencies
@@ -114,20 +107,29 @@ fi
 # --- 3. Run python installer to get User inputs --- #
 echo 'setting up installer'
 
-# setup & activate python venv
-python3 -m venv appenv
-source appenv/bin/activate
+sudo -u $USR bash -c "
+    python3 -m venv appenv
+    source appenv/bin/activate
+    pip3 install -r ./setup/installer/requirements.txt
+    echo 'starting installer script'
+    PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
+    deactivate
+"
 
-# install requirements
-pip3 install -r ./setup/installer/requirements.txt
+# # setup & activate python venv
+# python3 -m venv appenv
+# source appenv/bin/activate
 
-echo 'starting installer script'
+# # install requirements
+# pip3 install -r ./setup/installer/requirements.txt
 
-# init installer.py setup script
-PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
+# echo 'starting installer script'
 
-# deactivate venv
-deactivate
+# # init installer.py setup script
+# PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
+
+# # deactivate venv
+# deactivate
 
 
 
@@ -136,7 +138,7 @@ deactivate
 echo 'starting up services with docker'
 
 # start up services
-sudo docker compose -f docker-compose.yml up -d
+sudo -u $USR docker compose -f docker-compose.yml up -d
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...'
