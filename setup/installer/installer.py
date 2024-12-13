@@ -9,11 +9,11 @@ from rich import print as rprint
 # High Level Configs
 
 app = typer.Typer()
-env_dir = Path(str(Path.home()) + '/selfhost/cursion/env')
-env_client_old = Path(str(Path.home()) + '/selfhost/cursion/env/.client.example.env')
-env_server_old = Path(str(Path.home()) + '/selfhost/cursion/env/.server.example.env')
-env_client = Path(str(Path.home()) + '/selfhost/cursion/env/.client.env')
-env_server = Path(str(Path.home()) + '/selfhost/cursion/env/.server.env')
+env_dir = Path(str(Path.home()) + '/cursion/selfhost/env')
+env_client_old = Path(str(Path.home()) + '/cursion/selfhost/env/.client.example.env')
+env_server_old = Path(str(Path.home()) + '/cursion/selfhost/env/.server.example.env')
+env_client = Path(str(Path.home()) + '/cursion/selfhost/env/.client.env')
+env_server = Path(str(Path.home()) + '/cursion/selfhost/env/.server.env')
 cursion_root = 'https://api.cursion.dev'
 
 
