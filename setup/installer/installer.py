@@ -6,10 +6,10 @@ import typer, os, json, time, shutil, secrets, base64, requests, sys
 # High Level Configs
 
 app = typer.Typer()
-local = '' # testing path -> /documents/coding
-env_dir = Path(str(Path.home()) + f'{local}/cursion/selfhost/env')
-env_client = Path(str(Path.home()) + f'{local}/cursion/selfhost/env/.client.env')
-env_server = Path(str(Path.home()) + f'{local}/cursion/selfhost/env/.server.env')
+local = '/cursion/app/selfhost' # testing path -> /documents/coding
+env_dir = Path(str(Path.home()) + f'{local}/env')
+env_client = Path(str(Path.home()) + f'{local}/env/.client.env')
+env_server = Path(str(Path.home()) + f'{local}/env/.server.env')
 cursion_root = 'https://api.cursion.dev'
 
 
@@ -117,7 +117,7 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                '[✔️]' +
+                '[✓]' +
                 '[/green bold]'+
                 f' License is verified'
             )
@@ -175,7 +175,7 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                '[✔️]' +
+                '[✓]' +
                 '[/green bold]'+
                 f' Credentials updated:\n' +
                 f'  username    : admin\n' +
@@ -235,7 +235,7 @@ def setup() -> None:
 
             rprint(
                 '[green bold]' +
-                '[✔️]' +
+                '[✓]' +
                 '[/green bold]'+
                 f" Domains updated"
             )
@@ -250,7 +250,7 @@ def setup() -> None:
     # print response
     rprint(
         '[green bold]' +
-        '[✔️]' +
+        '[✓]' +
         '[/green bold]'+
         f" Configuration complete!"
     )
@@ -262,42 +262,43 @@ def setup() -> None:
 
 def update_env(env_path: str, variables: dict) -> None:
     """
-    Updates or adds variables in passed .env file
+    Updates or adds variables in the passed .env 
+    file while preserving unchanged lines.
     """
-
-    # read the current .env file content into memory
+    # Read the current .env file content into memory
     with open(env_path, 'r') as file:
         lines = file.readlines()
 
-    # create a dictionary to hold the current .env variables
-    current_vars = {}
-    for line in lines:
-        # Ignore comments and empty lines
-        if '=' in line and not line.startswith('#'):
-            key, value = line.strip().split('=', 1)
-            current_vars[key] = value
+    # Track variables that have been updated or added
+    updated_keys = set()
 
-    # set default to the updated content
+    # Prepare the updated content
     updated_lines = []
 
-    # iterate over the variables and either update or add them
-    for key, value in variables.items():
-        if key in current_vars:
-            # Update the existing variable
-            updated_lines.append(f'{key}={value}\n')
-        else:
-            # Add the new variable
-            updated_lines.append(f'{key}={value}\n')
-
-    # add the unchanged lines from the original file
     for line in lines:
-        # only add lines that are not part of the variables to update
-        if '=' not in line or line.startswith('#'):
+        # Check if the line contains a key-value pair
+        if '=' in line and not line.startswith('#'):
+            key, _ = line.strip().split('=', 1)
+            if key in variables:
+                # Update the variable
+                updated_lines.append(f'{key}={variables[key]}\n')
+                updated_keys.add(key)
+            else:
+                # Preserve the existing variable
+                updated_lines.append(line)
+        else:
+            # Preserve comments and empty lines
             updated_lines.append(line)
 
-    # write the updated content back to the .env file
+    # Add any new variables that were not in the original file
+    for key, value in variables.items():
+        if key not in updated_keys:
+            updated_lines.append(f'{key}={value}\n')
+
+    # Write the updated content back to the .env file
     with open(env_path, 'w') as file:
         file.writelines(updated_lines)
+
 
 
 

@@ -82,11 +82,11 @@ set -e
 
 # setting docker permissions
 sudo usermod -aG docker $USR
-newgrp docker
+sudo -u $USR newgrp docker
 
 # reset default vars after `newgrp`
 USR="cursion"
-DIR="cursion"
+DIR="app"
 REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 
 
@@ -96,7 +96,10 @@ REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 echo 'downloading Cursion Self-Hosted repo'
 
 # create cursion dir
-mkdir -p $DIR && cd $DIR
+mkdir -p /home/$USR/$DIR
+chown -R $USR:$USR /home/$USR/$DIR
+chmod -R 755 /home/$USR/$DIR
+cd /home/$USR/$DIR
 
 # clone self-hosted repo
 if [ -d "./selfhost" ]; then
@@ -136,15 +139,11 @@ deactivate
 # --- 4. Spin up Cursion using docker compose --- #
 echo 'starting up services with docker'
 
-# Set ownership & permissions for the `cursion` user
-chown -R $USR:$USR /root/cursion/selfhost
-chmod -R 755 /root/cursion/selfhost
-
 # adding extra permissions for docker cmds
-echo "$USR ALL=(ALL) NOPASSWD: /usr/bin/docker" | sudo tee -a /etc/sudoers
+echo "%docker ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 # start up services
-docker compose -f docker-compose.yml up -d
+sudo -u $USR docker compose -f docker-compose.yml up -d
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...'
