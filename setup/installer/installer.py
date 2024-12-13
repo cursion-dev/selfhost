@@ -100,7 +100,7 @@ def setup() -> None:
         api_data = requests.post(
             url=f'{cursion_root}/v1/auth/account/license', 
             headers=headers,
-            data=json.dump({'license_key': license_key})
+            data=json.dumps({'license_key': license_key})
         ).json()
 
         # update all api data in SERVER vars
