@@ -6,6 +6,10 @@
 
 
 
+set -e  # Exit immediately on command failure
+set -u  # Treat unset variables as errors
+
+
 
 # --- 0. Setup dependencies and environment --- #
 echo 'setting up host environment' &&
@@ -14,57 +18,50 @@ echo 'setting up host environment' &&
 apt update &&
 
 # set default vars
-USER="cursion"
-USER_PASS="cursion1234!"
+# USR="cursion"
+# USER_PASS="cursion1234!"
 DIR="cursion"
 REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 
-# update password if requested
-if [[ $1 != $USER_PASS ]]
-    then
-        USER_PASS=$1 &&
-        echo 'updated USER_PASS'
-fi
+# # update password if requested
+# if [[ $# -ge 1 && -n $1 ]]; then
+#     USER_PASS=$1
+#     echo "Updated USER_PASS"
+# fi
 
-# create new user 
-useradd -m $USER && echo $USER_PASS | passwd --stdin $USER &&
-usermod -aG sudo $USER &&
-su $USER &&
+# # Create user and set password
+# if ! id -u $USR &>/dev/null; then
+#     useradd -m $USR
+#     echo "$USR:$USER_PASS" | chpasswd
+#     usermod -aG sudo $USR
+# else
+#     echo "User $USR already exists"
+# fi
 
-# check and install git
-git --version || apt-get install git -y &&
-
-# check and install python3
-python3 --version || apt-get install python3 python3-venv -y &&
-
-# check and install python3-venv
-python3-venv --version || apt-get install python3-venv -y &&
+# install dependencies
+apt-get install -y ca-certificates curl python3 docker.io
 
 # check and install docker
-docker --version || { 
-    # uninstall old pkgs
-    for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg; done &&
+# docker --version || { 
+#     # uninstall old pkgs
+#     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg -y; done
     
-    # download new
-    apt-get install ca-certificates && 
-    install -m 0755 -d /etc/apt/keyrings && 
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
+#     # download new
+#     apt-get install ca-certificates
+#     install -m 0755 -d /etc/apt/keyrings
+#     curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+#     chmod a+r /etc/apt/keyrings/docker.asc
 
-    # Add the repository to Apt sources:
-    echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-        tee /etc/apt/sources.list.d/docker.list > /dev/null
-    apt-get update
+#     # Add the repository to Apt sources:
+#     echo \
+#         "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+#         tee /etc/apt/sources.list.d/docker.list > /dev/null
+#     apt-get update
     
-    # install new docker
-    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-} &&
-
-# switch to cursion user
-echo $USER_PASS | sudo -S usermod -aG docker $USER && 
-newgrp docker &&
+#     # install new docker
+#     apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+# }
 
 
 
@@ -73,13 +70,14 @@ newgrp docker &&
 echo 'downloading Cursion Self-Hosted repo' &&
 
 # create cursion dir
-mkdir $DIR && cd $DIR &&
+mkdir -p $DIR && cd $DIR && 
 
 # clone self-hosted repo
 git clone $REPOSITORY &&
 
-# setup & activate python venv
-python3 -m venv appenv && source appenv/bin/activate &&
+# # setup & activate python venv
+# python3 -m venv appenv && 
+# source appenv/bin/activate &&
 
 # install requirements
 python3 -m pip install -r ./setup/installer/requirements.txt &&
@@ -93,8 +91,8 @@ echo 'starting up installer' &&
 # init installer.py setup script
 python3 ./setup/installer/installer.py &&
 
-# deactivate venv
-deactivate && 
+# # deactivate venv
+# deactivate && 
 
 
 
@@ -122,11 +120,11 @@ echo -e "\n"
 
 
 # end script and display access directions
-source ./env/.server.env && 
-echo 'Cursion should be up and running!' && 
-echo 'Access the Client App here -> ${CLIENT_URL_ROOT}/login' && 
-echo 'Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin' && 
-echo 'Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}' &&
+export $(grep -v '^#' ./env/.server.env | xargs)
+echo "Cursion should be up and running!" && 
+echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login" && 
+echo "Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin" && 
+echo "Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}" &&
 
 # exit scipt
 exit 0
