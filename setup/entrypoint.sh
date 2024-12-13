@@ -39,7 +39,7 @@ REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 # fi
 
 # install dependencies
-apt-get install -y ca-certificates curl python3
+apt-get install -y ca-certificates python3
 
 # check and install docker
 docker --version || { 
@@ -47,7 +47,6 @@ docker --version || {
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do apt-get remove $pkg -y; done
     
     # download new
-    apt-get install ca-certificates
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
     chmod a+r /etc/apt/keyrings/docker.asc
