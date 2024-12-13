@@ -16,22 +16,25 @@ echo 'setting up host environment'
 
 # set default vars
 USR="cursion"
-DIR="cursion"
-REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 
-# check for 
+# check for root execution
 if [ "$(id -u)" -ne 0 ]; then
-    echo "You must run this script as root"
+    echo "you must run this script as root"
     exit 1
 fi
 
-# created password for cursion user
-read -s -p "please create a password for the cursion user: " USER_PASS
-echo
-read -s -p "please confirm the password: " USER_PASS_CONFIRM
-echo
+# install dialog if it's not installed
+if ! command -v dialog &>/dev/null; then
+    apt-get install -y dialog
+fi
+
+# created password for cursion user using dialog
+USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "create a password for the cursion user" 8 40 2>&1 >/dev/tty)
+USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "confirm the password" 8 40 2>&1 >/dev/tty)
+
+# matching password
 if [[ "$USER_PASS" != "$USER_PASS_CONFIRM" ]]; then
-    echo "passwords do not match. Exiting..."
+    echo "passwords do not match. exiting..."
     exit 1
 fi
 echo "cursion password created!"
@@ -42,7 +45,7 @@ if ! id -u $USR &>/dev/null; then
     echo "$USR:$USER_PASS" | chpasswd
     usermod -aG sudo $USR
 else
-    echo "User $USR already exists"
+    echo "user $USR already exists"
 fi
 
 
@@ -81,6 +84,11 @@ set -e
 sudo usermod -aG docker $USR
 newgrp docker
 
+# reset default vars after `newgrp`
+USR="cursion"
+DIR="cursion"
+REPOSITORY="https://github.com/cursion-dev/selfhost.git"
+
 
 
 
@@ -92,7 +100,7 @@ mkdir -p $DIR && cd $DIR
 
 # clone self-hosted repo
 if [ -d "./selfhost" ]; then
-    echo "Repository already exists. Pulling the latest changes..."
+    echo "repo already exists, pulling the latest changes..."
     cd selfhost
     git pull
 else
