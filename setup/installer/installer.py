@@ -134,8 +134,10 @@ def setup() -> None:
             )
    
     # ask for admin email
-    # admin_email = typer.prompt('  Enter an admin email address')
-    admin_email = input('   Enter an admin email address: ')
+    admin_email = typer.prompt(
+        text='  Enter an admin email address'
+    )
+    # admin_email = input('   Enter an admin email address: ')
     # sys.stdout.write('  Enter an admin email address: ')
     # admin_email = input().strip()
     
@@ -154,22 +156,22 @@ def setup() -> None:
         sys.stdout.flush()
 
         # ask for admin password
-        # pass_1 = typer.prompt(
-        #     text='  Create an admin password', 
-        #     hide_input=True
-        # )
-        sys.stdout.write('  Create an admin password: ')
-        sys.stdout.flush()
-        pass_1 = input().strip()
+        pass_1 = typer.prompt(
+            text='  Create an admin password', 
+            hide_input=True
+        )
+        # sys.stdout.write('  Create an admin password: ')
+        # sys.stdout.flush()
+        # pass_1 = input().strip()
 
         # confirm admin pass
-        # pass_2 = typer.prompt(
-        #     text='  Confirm admin password', 
-        #     hide_input=True
-        # )
-        sys.stdout.write('  Confirm the admin password: ')
-        sys.stdout.flush()
-        pass_2 = input().strip()
+        pass_2 = typer.prompt(
+            text='  Confirm admin password', 
+            hide_input=True
+        )
+        # sys.stdout.write('  Confirm the admin password: ')
+        # sys.stdout.flush()
+        # pass_2 = input().strip()
 
         # check password
         admin_confirmed = pass_1 == pass_2

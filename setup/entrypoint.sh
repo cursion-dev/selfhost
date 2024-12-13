@@ -95,8 +95,11 @@ pip3 install -r ./setup/installer/requirements.txt
 # --- 2. Run python installer to get User inputs --- #
 echo 'starting up installer'
 
+echo "Checking stdin, stdout, stderr"
+ls -l /proc/$$/fd
+
 # init installer.py setup script
-python3 ./setup/installer/installer.py
+PYTHONUNBUFFERED=1 python3 -i ./setup/installer/installer.py </dev/tty
 
 # deactivate venv
 deactivate
