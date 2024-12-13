@@ -13,18 +13,23 @@ echo 'setting up host environment' &&
 # update system
 apt update &&
 
-# set user password
+# set default vars
+USER="cursion"
 USER_PASS="cursion1234!"
-# if [[ $1 != $USER_PASS ]]
-#     then
-#         USER_PASS=$1 &&
-#         echo 'updated USER_PASS'
-# fi
+DIR="cursion"
+REPOSITORY="https://github.com/cursion-dev/selfhost.git"
+
+# update password if requested
+if [[ $1 != $USER_PASS ]]
+    then
+        USER_PASS=$1 &&
+        echo 'updated USER_PASS'
+fi
 
 # create new user 
-useradd -m cursion && echo $USER_PASS | passwd --stdin cursion &&
-usermod -aG sudo cursion &&
-su cursion &&
+useradd -m $USER && echo $USER_PASS | passwd --stdin $USER &&
+usermod -aG sudo $USER &&
+su $USER &&
 
 # check and install git
 git --version || apt-get install git -y &&
@@ -58,7 +63,7 @@ docker --version || {
 } &&
 
 # switch to cursion user
-echo $USER_PASS | sudo -S usermod -aG docker cursion && 
+echo $USER_PASS | sudo -S usermod -aG docker $USER && 
 newgrp docker &&
 
 
@@ -68,10 +73,10 @@ newgrp docker &&
 echo 'downloading Cursion Self-Hosted repo' &&
 
 # create cursion dir
-mkdir cursion && cd cursion &&
+mkdir $DIR && cd $DIR &&
 
 # clone self-hosted repo
-git clone https://github.com/cursion-dev/selfhost.git &&
+git clone $REPOSITORY &&
 
 # setup & activate python venv
 python3 -m venv appenv && source appenv/bin/activate &&
@@ -111,6 +116,10 @@ while [[ $i -le 10 ]]; do
     ((i++))
 done
 echo -e "\n"
+
+
+
+
 
 # end script and display access directions
 source ./env/.server.env && 
