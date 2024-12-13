@@ -58,7 +58,7 @@ docker --version || {
 } &&
 
 # switch to cursion user
-echo $USER_PASS | sudo -S usermod -aG docker && 
+echo $USER_PASS | sudo -S usermod -aG docker cursion && 
 newgrp docker &&
 
 
