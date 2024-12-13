@@ -87,7 +87,7 @@ fi
 # source appenv/bin/activate &&
 
 # install requirements
-python3 -m pip3 install -r ./setup/installer/requirements.txt
+pip3 install -r ./setup/installer/requirements.txt
 
 
 
