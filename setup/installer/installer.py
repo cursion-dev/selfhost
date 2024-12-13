@@ -137,11 +137,11 @@ def setup() -> None:
     sys.stdout.flush()
    
     # ask for admin email
-    # admin_email = typer.prompt('  Enter an admin email address')
-    # admin_email = input('   Enter an admin email address: ')
-    sys.stdout.write('  Enter an admin email address: ')
-    sys.stdout.flush()
-    admin_email = input().strip()
+    admin_email = typer.prompt('  Enter an admin email address')
+    # # admin_email = input('   Enter an admin email address: ')
+    # sys.stdout.write('  Enter an admin email address: ')
+    # sys.stdout.flush()
+    # admin_email = input().strip()
     
     # flush prompts
     sys.stdout.flush()
