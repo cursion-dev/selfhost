@@ -119,12 +119,12 @@ fi
 echo 'setting up installer'
 
 # Install requirements (allow --break-system-packages if needed)
-pip3 install -r ./setup/installer/requirements.txt --break-system-packages
+sudo -u $USR pip3 install -r ./setup/installer/requirements.txt --break-system-packages
 
 echo 'starting installer script'
 
 # Run installer.py setup script
-su - $USR -c "PYTHONUNBUFFERED=1 ./setup/installer/installer.py </dev/tty"
+sudo -u $USR PYTHONUNBUFFERED=1 ./setup/installer/installer.py </dev/tty
 
 
 
@@ -136,7 +136,7 @@ echo 'starting up services with docker'
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
 
 # start up services
-su - $USR -c "docker compose -f /home/$USR/$DIR/selfhost/docker-compose.yml up -d"
+sudo -u $USR docker compose -f docker-compose.yml up -d
 
 # wait 60 seconds for services to initialize
 echo 'waiting for services to finish initializing...'
