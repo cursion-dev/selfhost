@@ -39,7 +39,7 @@ REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 # fi
 
 # install dependencies
-apt-get install -y ca-certificates python3 python3-pip
+apt-get install -y ca-certificates python3 python3-pip python3-venv
 
 # check and install docker
 docker --version || { 
@@ -82,9 +82,9 @@ else
     cd selfhost
 fi
 
-# # setup & activate python venv
-# python3 -m venv appenv && 
-# source appenv/bin/activate &&
+# setup & activate python venv
+python3 -m venv appenv && 
+source appenv/bin/activate &&
 
 # install requirements
 pip3 install -r ./setup/installer/requirements.txt
@@ -98,8 +98,8 @@ echo 'starting up installer'
 # init installer.py setup script
 python3 ./setup/installer/installer.py
 
-# # deactivate venv
-# deactivate && 
+# deactivate venv
+deactivate && 
 
 
 
