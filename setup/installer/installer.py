@@ -259,7 +259,7 @@ def setup() -> None:
         f" Configuration complete!"
     )
     
-    sys.exit(0)
+    return
 
 
 
