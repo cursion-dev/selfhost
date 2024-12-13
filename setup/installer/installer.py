@@ -6,7 +6,7 @@ import typer, os, json, time, shutil, secrets, base64, requests, sys
 # High Level Configs
 
 app = typer.Typer()
-local = '/cursion/app/selfhost' # testing path -> /documents/coding
+local = '/cursion/app/selfhost' # testing path -> '/documents/coding/cursion/selfhost'
 env_dir = Path(str(Path.home()) + f'{local}/env')
 env_client = Path(str(Path.home()) + f'{local}/env/.client.env')
 env_server = Path(str(Path.home()) + f'{local}/env/.server.env')
