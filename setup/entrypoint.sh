@@ -124,7 +124,7 @@ pip3 install -r ./setup/installer/requirements.txt --break-system-packages
 echo 'starting installer script'
 
 # Run installer.py setup script
-PYTHONUNBUFFERED=1 ./setup/installer/installer.py </dev/tty
+su - $USR -c "PYTHONUNBUFFERED=1 ./setup/installer/installer.py </dev/tty"
 
 
 
