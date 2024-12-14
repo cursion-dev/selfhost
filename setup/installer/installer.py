@@ -79,7 +79,8 @@ def setup() -> None:
     headers = {'content-type': 'application/json'}
 
     # generate keys and passwords
-    db_password = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+    # db_password = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+    db_password = 'supersecretpassword' # -> temporary for debugging, otherwise each run creates a new psw
     random_key = secrets.token_bytes(32)
     secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
     

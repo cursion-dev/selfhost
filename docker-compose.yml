@@ -139,13 +139,14 @@ services:
     image: nginxproxy/acme-companion
     platform: linux/amd64
     user: "0:0"
+    privileged: true
     env_file:
       - ./env/.server.env
     volumes:
       - certs:/etc/nginx/certs
       - html:/usr/share/nginx/html
       - vhost:/etc/nginx/vhost.d
-      - /var/run/docker.sock:/tmp/docker.sock:z
+      - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt-acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
