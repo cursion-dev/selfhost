@@ -138,13 +138,14 @@ services:
     hostname: nginx-proxy-letsencrypt
     image: nginxproxy/acme-companion
     platform: linux/amd64
+    user: "0:0"
     env_file:
       - ./env/.server.env
     volumes:
       - certs:/etc/nginx/certs
       - html:/usr/share/nginx/html
       - vhost:/etc/nginx/vhost.d
-      - /var/run/docker.sock:/tmp/docker.sock:z  # TODO: this is failing bc of permissions 
+      - /var/run/docker.sock:/tmp/docker.sock:z
       - letsencrypt-acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
