@@ -135,13 +135,13 @@ sudo -u $USR docker compose -f docker-compose.yml up --build -d
 echo 'Waiting for services to finish initializing...'
 
 i=0
-progress='####################' # 20 long
+progress='####################' # 20 characters long
 while [[ $i -le 10 ]]; do
-    echo -ne "${progress:0:$((i*2))}  ($((i*10))%)\r"
+    echo -ne "\r${progress:0:$((i*2))}  ($((i*10))%)"
     sleep 6
     ((i++))
 done
-echo -e "\n"
+echo -ne "\r${progress}  (100%)\n"
 
 
 
