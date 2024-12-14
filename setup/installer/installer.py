@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from rich import print as rprint
-import typer, os, json, time, shutil, secrets, base64, requests, sys
+import typer, os, json, time, shutil, secrets, base64, requests, sys, string
 
 
 # High Level Configs
 
 app = typer.Typer()
-local = '/home/cursion/app/selfhost' # testing path -> f'{str(Path.home())"/documents/coding/cursion/selfhost'
+local = '/home/cursion/selfhost' # testing path -> f'{str(Path.home())"/documents/coding/cursion/selfhost'
 env_dir = Path(f'{local}/env')
 env_client = Path(f'{local}/env/.client.env')
 env_server = Path(f'{local}/env/.server.env')
@@ -79,13 +79,13 @@ def setup() -> None:
     headers = {'content-type': 'application/json'}
 
     # generate keys and passwords
-    db_password = secrets.token_urlsafe(12)
+    db_password = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
     random_key = secrets.token_bytes(32)
     secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
     
     # update SERVER vars
-    SERVER_VARS['DB_PASS']           = 'supersecretpassword'
-    SERVER_VARS['POSTGRES_PASSWORD'] = 'supersecretpassword'
+    SERVER_VARS['DB_PASS']           = db_password
+    SERVER_VARS['POSTGRES_PASSWORD'] = db_password
     SERVER_VARS['SECRETS_KEY']       = secret_key
 
     

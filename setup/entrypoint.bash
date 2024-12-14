@@ -80,7 +80,6 @@ usermod -aG docker $USR
 
 # Reset default vars
 USR="cursion"
-DIR="app"
 REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 
 
@@ -90,10 +89,10 @@ REPOSITORY="https://github.com/cursion-dev/selfhost.git"
 echo 'Downloading Cursion Self-Hosted repo'
 
 # Create cursion directory
-mkdir -p /home/$USR/$DIR
-chown -R $USR:$USR /home/$USR/$DIR
-chmod -R 755 /home/$USR/$DIR
-cd /home/$USR/$DIR
+mkdir -p /home/$USR
+chown -R $USR:$USR /home/$USR
+chmod -R 755 /home/$USR
+cd /home/$USR
 
 # Clone self-hosted repo
 if [ -d "./selfhost" ]; then

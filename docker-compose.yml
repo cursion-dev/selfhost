@@ -144,7 +144,7 @@ services:
       - certs:/etc/nginx/certs
       - html:/usr/share/nginx/html
       - vhost:/etc/nginx/vhost.d
-      - /var/run/docker.sock:/tmp/docker.sock:z
+      - /var/run/docker.sock:/tmp/docker.sock:z  # TODO: this is failing bc of permissions 
       - letsencrypt-acme:/etc/acme.sh
     depends_on:
       - nginx-proxy
