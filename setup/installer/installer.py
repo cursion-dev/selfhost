@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from rich import print as rprint
-import typer, os, json, time, shutil, secrets, base64, requests, sys, string
+import typer, json, time, secrets, base64, requests, string, random
 
 
 # High Level Configs
@@ -151,9 +151,6 @@ def setup() -> None:
 
     # get admin password inputs
     while not admin_confirmed:
-
-        # flush prompts
-        sys.stdout.flush()
 
         # ask for admin password
         pass_1 = typer.prompt(
