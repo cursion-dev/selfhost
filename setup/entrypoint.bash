@@ -137,7 +137,7 @@ sudo -u $USR docker compose -f docker-compose.yml up --build -d
 
 # --- 5. Display access directions --- #
 # Load environment variables from .env
-export $(grep -v '^#' ./env/.server.env | xargs)
+export $(grep -E '^[A-Za-z_][A-Za-z0-9_]*=' ./env/.server.env | xargs)
 
 echo "Cursion should be up and running in a few minutes!"
 echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login"

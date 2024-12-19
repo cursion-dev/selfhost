@@ -92,6 +92,21 @@ def setup() -> None:
     SERVER_VARS['POSTGRES_PASSWORD'] = db_password
     SERVER_VARS['SECRETS_KEY']       = secret_key
 
+
+    # welcome message
+    welcome = (
+        """
+        \n
+        ==================================================
+
+                       Welcome to Cursion!
+
+        ================================================== 
+        \n
+        """
+    )
+    print(welcome)
+
     
     # get license key and API data
     while not verified:
