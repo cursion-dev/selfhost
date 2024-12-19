@@ -4,4 +4,6 @@ This is the self-hosted repo for the Cursion Platform, an error detection servic
 
 > This software is only intended for internal white-label use and is not licensed for redristibution. See LICENSE for more information.
 
+### 💻 [Installation Guide](https://docs.cursion.dev/guides/selfhost.html)
+
 Copyright © Cursion 2024

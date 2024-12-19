@@ -138,7 +138,6 @@ services:
     hostname: nginx-proxy-letsencrypt
     image: nginxproxy/acme-companion
     platform: linux/amd64
-    user: "0:0"
     privileged: true
     env_file:
       - ./env/.server.env

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from rich import print as rprint
-import typer, json, time, secrets, base64, requests, string, random
+import typer, json, secrets, base64, requests
+
+
+
+
 
 
 # High Level Configs
-
 app = typer.Typer()
 local = '/home/cursion/selfhost' # testing path -> f'{str(Path.home())"/documents/coding/cursion/selfhost'
 env_dir = Path(f'{local}/env')
@@ -79,8 +82,8 @@ def setup() -> None:
     headers = {'content-type': 'application/json'}
 
     # generate keys and passwords
-    # db_password = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
-    db_password = 'supersecretpassword' # -> temporary for debugging, otherwise each run creates a new psw
+    # db_password = 'supersecretpassword' # -> fake/temp for debugging
+    db_password = secrets.token_urlsafe(16)
     random_key = secrets.token_bytes(32)
     secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
     
@@ -301,7 +304,9 @@ def update_env(env_path: str, variables: dict) -> None:
 
 
 
-
 ## --- Installer entry point --- ##
 if __name__ == '__main__':
     app()
+
+
+

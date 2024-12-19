@@ -6,6 +6,7 @@
 
 
 
+
 set -e  # Exit immediately on command failure
 set -u  # Treat unset variables as errors
 
@@ -131,18 +132,6 @@ echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 # Start up services
 sudo -u $USR docker compose -f docker-compose.yml up --build -d
 
-# Wait for services to initialize
-echo 'Waiting for services to finish initializing...'
-
-i=0
-progress='####################' # 20 characters long
-while [[ $i -le 10 ]]; do
-    echo -ne "\r${progress:0:$((i*2))}  ($((i*10))%)"
-    sleep 6
-    ((i++))
-done
-echo -ne "\r${progress}  (100%)\n"
-
 
 
 
@@ -150,10 +139,13 @@ echo -ne "\r${progress}  (100%)\n"
 # Load environment variables from .env
 export $(grep -v '^#' ./env/.server.env | xargs)
 
-echo "Cursion should be up and running!"
+echo "Cursion should be up and running in a few minutes!"
 echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login"
 echo "Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin"
 echo "Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}"
 
 # Exit script
 exit 0
+
+
+
