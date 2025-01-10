@@ -1,9 +1,9 @@
 # Cursion Self-Hosted
 
-This is the self-hosted repo for the Cursion Platform, an error detection service designed to run front-end tests on web applications. This service is fully dockertized for deployed environments.
+This is the self-hosted repo for the Cursion Platform - ✨ Compicated Web Testing on Easy Mode.
 
 > This software is only intended for internal white-label use and is not licensed for redristibution. See LICENSE for more information.
 
 ### 💻 [Installation Guide](https://docs.cursion.dev/guides/selfhost.html)
 
-Copyright © Cursion 2024
+Copyright © Grey Labs, LLC 2025
