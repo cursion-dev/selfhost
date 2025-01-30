@@ -4,7 +4,7 @@ services:
   client:
     container_name: cursion-client
     hostname: cursion-client
-    image: cursiondev/client
+    image: cursiondev/client:latest
     platform: linux/amd64
     pull_policy: always
     env_file:
@@ -16,7 +16,7 @@ services:
   server:
     container_name: cursion-server
     hostname: cursion-server
-    image: cursiondev/server
+    image: cursiondev/server:latest
     platform: linux/amd64
     pull_policy: always
     restart: always
@@ -59,7 +59,7 @@ services:
   celery:
     container_name: cursion-celery
     hostname: cursion-celery
-    image: cursiondev/server
+    image: cursiondev/server:latest
     platform: linux/amd64
     pull_policy: always
     privileged: true
@@ -78,7 +78,7 @@ services:
   beat:
     container_name: cursion-beat
     hostname: cursion-beat
-    image: cursiondev/server
+    image: cursiondev/server:latest
     platform: linux/amd64
     privileged: true
     pull_policy: always
