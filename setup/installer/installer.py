@@ -9,12 +9,12 @@ import typer, json, secrets, base64, requests
 
 
 # High Level Configs
-app = typer.Typer()
-local = '/home/cursion/selfhost' # testing path -> f'{str(Path.home())"/documents/coding/cursion/selfhost'
-env_dir = Path(f'{local}/env')
-env_client = Path(f'{local}/env/.client.env')
-env_server = Path(f'{local}/env/.server.env')
-cursion_root = 'https://api.cursion.dev'
+app             = typer.Typer()
+local           = '/home/cursion/selfhost' # testing path -> f'{Path.home()}/documents/coding/cursion/selfhost'
+env_dir         = Path(f'{local}/env')
+env_client      = Path(f'{local}/env/.client.env')
+env_server      = Path(f'{local}/env/.server.env')
+cursion_root    = 'https://api.cursion.dev'
 
 
 SERVER_VARS = {
@@ -98,16 +98,36 @@ welcome = (
 
 
 @app.command()
-def setup() -> None:
+def setup(
+        license_key     : str=None,
+        admin_email     : str=None,
+        admin_pass      : str=None,
+        server_domain   : str=None,
+        client_domain   : str=None,
+        gpt_key         : str=None
+    ) -> None:
 
     """ 
-    Setup and configure env's for Client and Server
+    Setup and configure env's for Client and Server.
+    Args are optional, but all must be passed together.
+
+    Expects: {
+        license_key    : str (OPTIONAL),
+        admin_email    : str (OPTIONAL),
+        admin_pass     : str (OPTIONAL),
+        server_domain  : str (OPTIONAL),
+        client_domain  : str (OPTIONAL),
+        gpt_key        : str (OPTIONAL)
+    }
+
+    Return: None
     """
 
     # set defaults
     verified = False
     admin_confirmed = False
     domains_confirmed = False
+    gpt_confirmed = False
     headers = {'content-type': 'application/json'}
 
     # generate keys and passwords
@@ -130,10 +150,11 @@ def setup() -> None:
     while not verified:
 
         # ask for license key
-        license_key = typer.prompt(
-            text='  Enter your license key', 
-            hide_input=True
-        )
+        if not license_key:
+            license_key = typer.prompt(
+                text='  Enter your license key', 
+                hide_input=True
+            )
 
         # get all API data
         api_data = requests.post(
@@ -174,9 +195,10 @@ def setup() -> None:
    
 
     # ask for admin email
-    admin_email = typer.prompt(
-        text='  Enter an admin email address'
-    )
+    if not admin_email:
+        admin_email = typer.prompt(
+            text='  Enter an admin email address'
+        )
     
     # update email and add username
     SERVER_VARS['ADMIN_USER'] = 'admin'
@@ -189,24 +211,31 @@ def setup() -> None:
     # get admin password inputs
     while not admin_confirmed:
 
-        # ask for admin password
-        pass_1 = typer.prompt(
-            text='  Create an admin password', 
-            hide_input=True
-        )
+        # get 'admin_confirmed'
+        admin_confirmed = True if admin_pass else False
 
-        # confirm admin pass
-        pass_2 = typer.prompt(
-            text='  Confirm admin password', 
-            hide_input=True
-        )
+        # check for passed "admin_pass"
+        if not admin_pass:
 
-        # check password
-        admin_confirmed = pass_1 == pass_2
+            # ask for admin password
+            pass_1 = typer.prompt(
+                text='  Create an admin password', 
+                hide_input=True
+            )
+
+            # confirm admin pass
+            pass_2 = typer.prompt(
+                text='  Confirm admin password', 
+                hide_input=True
+            )
+
+            # check password
+            admin_confirmed = pass_1 == pass_2
+            admin_pass = pass_1
         
         # update admin creds for SERVER & CLIENT vars
         if admin_confirmed:
-            SERVER_VARS['ADMIN_PASS'] = pass_1
+            SERVER_VARS['ADMIN_PASS'] = admin_pass
 
             rprint(
                 '[green bold]' +
@@ -231,15 +260,20 @@ def setup() -> None:
     # get domain name inputs
     while not domains_confirmed:
 
+        # get 'domains_confirmed'
+        domains_confirmed = True if server_domain and client_domain else False
+
         # ask for server domain name
-        server_domain = typer.prompt(
-            text='  Enter your Server domain (e.g. api.example.com)', 
-        )
+        if not server_domain:
+            server_domain = typer.prompt(
+                text='  Enter your Server domain (e.g. api.example.com)', 
+            )
         
         # ask for client domain name
-        client_domain = typer.prompt(
-            text='  Enter your Client domain (e.g. app.example.com)', 
-        )
+        if not client_domain:
+            client_domain = typer.prompt(
+                text='  Enter your Client domain (e.g. app.example.com)', 
+            )
 
         # clean urls
         server_domain = server_domain.replace('/','')
@@ -249,9 +283,15 @@ def setup() -> None:
 
 
         # ask for CLIENT url change request
-        domains_confirmed = typer.confirm(
-            text=f'  Does this look correct?  ({server_url})  ({client_url}) ', 
-        )
+        if not domains_confirmed:
+            domains_confirmed = typer.confirm(
+                text=f'  Does this look correct?  ({server_url})  ({client_url}) ', 
+            )
+        
+        # reset values
+        if not domains_confirmed:
+            server_domain = None
+            client_domain = None
 
         # check if correct
         if domains_confirmed:
@@ -273,6 +313,58 @@ def setup() -> None:
                 '[✓]' +
                 '[/green bold]'+
                 f" Domains updated"
+            )
+
+        
+    # get OpenAI API key
+    while not gpt_confirmed:
+
+        # ask for optional gpt key
+        if not gpt_key:
+            add_gpt_key = typer.confirm(
+                text=f'  Would you like to use your own OpenAI API Key?', 
+            )
+        
+        # ask for key
+        if add_gpt_key or gpt_key:
+            if not gpt_key:
+                gpt_key = typer.prompt(
+                    text='  Enter your OpenAI API Key', 
+                    hide_input=True
+                )
+
+            # check key
+            if len(gpt_key) > 0:
+
+                # update server vars
+                SERVER_VARS['GPT_API_KEY'] = gpt_key
+
+                # confirm key
+                gpt_confirmed = True
+                rprint(
+                    '[green bold]' +
+                    '[✓]' +
+                    '[/green bold]'+
+                    f" OpenAI key added"
+                )
+            
+            if len(gpt_key) == 0:
+                # incorrect key
+                rprint(
+                    '[red bold]' +
+                    '[✘]' +
+                    '[/red bold]' +
+                    ' OpenAI key missing'
+                )
+        
+        else:
+            # not updating OpenAI keys
+            gpt_confirmed = True
+            rprint(
+                '[green bold]' +
+                '[✓]' +
+                '[/green bold]'+
+                f" Using default OpenAI key"
             )
 
 

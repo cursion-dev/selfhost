@@ -12,6 +12,16 @@ set -u  # Treat unset variables as errors
 
 
 
+# Args definitions
+# 1. sys_pass      ($1)
+# 2. license_key   ($2)
+# 3. admin_email   ($3)
+# 4. admin_pass    ($4)
+# 5. server_domain ($5)
+# 6. client_domain ($6)
+# 7. gpt_key       ($7) - optional
+
+
 
 # --- 0. Setup environment --- #
 echo 'Setting up host environment'
@@ -31,8 +41,14 @@ if ! command -v dialog &>/dev/null; then
 fi
 
 # Create password for cursion user using dialog
-USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Create a password for the cursion user" 8 40 2>&1 >/dev/tty)
-USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "Confirm the password" 8 40 2>&1 >/dev/tty)
+# if sys_pass was not give in args
+if [ -z "$1" ]; then
+    USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Create a password for the cursion user" 8 40 2>&1 >/dev/tty)
+    USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "Confirm the password" 8 40 2>&1 >/dev/tty)
+else
+    USER_PASS=$1
+    USER_PASS_CONFIRM=$1
+fi
 
 # Match password
 if [[ "$USER_PASS" != "$USER_PASS_CONFIRM" ]]; then
@@ -118,7 +134,7 @@ pip3 install --user --break-system-packages -r ./setup/installer/requirements.tx
 echo 'Starting installer script'
 
 # Run installer.py setup script explicitly with Python
-python3 ./setup/installer/installer.py </dev/tty
+python3 ./setup/installer/installer.py $2 $3 $4 $5 $6 $7 </dev/tty
 
 
 
