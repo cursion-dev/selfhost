@@ -99,12 +99,12 @@ welcome = (
 
 @app.command()
 def setup(
-        license_key     : str=None,
-        admin_email     : str=None,
-        admin_pass      : str=None,
-        server_domain   : str=None,
-        client_domain   : str=None,
-        gpt_key         : str=None
+        license_key     : str='',
+        admin_email     : str='',
+        admin_pass      : str='',
+        server_domain   : str='',
+        client_domain   : str='',
+        gpt_key         : str=''
     ) -> None:
 
     """ 
@@ -150,7 +150,7 @@ def setup(
     while not verified:
 
         # ask for license key
-        if not license_key:
+        if len(license_key) == 0:
             license_key = typer.prompt(
                 text='  Enter your license key', 
                 hide_input=True
@@ -186,6 +186,7 @@ def setup(
     
         else:
             # incorrect key
+            license_key = None
             rprint(
                 '[red bold]' +
                 '[✘]' +
@@ -195,7 +196,7 @@ def setup(
    
 
     # ask for admin email
-    if not admin_email:
+    if len(admin_email) == 0:
         admin_email = typer.prompt(
             text='  Enter an admin email address'
         )
@@ -212,10 +213,10 @@ def setup(
     while not admin_confirmed:
 
         # get 'admin_confirmed'
-        admin_confirmed = True if admin_pass else False
+        admin_confirmed = True if len(admin_pass) > 0 else False
 
         # check for passed "admin_pass"
-        if not admin_pass:
+        if not admin_confirmed:
 
             # ask for admin password
             pass_1 = typer.prompt(
@@ -248,7 +249,7 @@ def setup(
             )
 
         if not admin_confirmed:
-            # incorrect key
+            # passwords don't match
             rprint(
                 '[red bold]' +
                 '[✘]' +
@@ -261,16 +262,16 @@ def setup(
     while not domains_confirmed:
 
         # get 'domains_confirmed'
-        domains_confirmed = True if server_domain and client_domain else False
+        domains_confirmed = True if len(server_domain) > 0 and len(client_domain) > 0 else False
 
         # ask for server domain name
-        if not server_domain:
+        if len(server_domain) == 0:
             server_domain = typer.prompt(
                 text='  Enter your Server domain (e.g. api.example.com)', 
             )
         
         # ask for client domain name
-        if not client_domain:
+        if len(client_domain) == 0:
             client_domain = typer.prompt(
                 text='  Enter your Client domain (e.g. app.example.com)', 
             )
@@ -290,8 +291,8 @@ def setup(
         
         # reset values
         if not domains_confirmed:
-            server_domain = None
-            client_domain = None
+            server_domain = ''
+            client_domain = ''
 
         # check if correct
         if domains_confirmed:
@@ -320,14 +321,15 @@ def setup(
     while not gpt_confirmed:
 
         # ask for optional gpt key
-        if not gpt_key:
+        add_gpt_key = False
+        if len(gpt_key) == 0:
             add_gpt_key = typer.confirm(
                 text=f'  Would you like to use your own OpenAI API Key?', 
             )
         
         # ask for key
-        if add_gpt_key or gpt_key:
-            if not gpt_key:
+        if add_gpt_key or len(gpt_key) == 0:
+            if len(gpt_key) == 0:
                 gpt_key = typer.prompt(
                     text='  Enter your OpenAI API Key', 
                     hide_input=True
