@@ -135,13 +135,12 @@ echo 'Starting installer script'
 
 # Run installer.py setup script explicitly with Python
 python3 ./setup/installer/installer.py \ 
-    --license-key=$2 \ 
-    --admin-email=$3 \ 
-    --admin-pass=$4 \ 
-    --server-domain=$5 \ 
-    --client-domain=$6 \ 
-    --gpt-key=$7 \ 
-    </dev/tty
+    --license-key="$2" \ 
+    --admin-email="$3" \ 
+    --admin-pass="$4" \ 
+    --server-domain="$5" \ 
+    --client-domain="$6" \ 
+    --gpt-key="$7" </dev/tty
 
 
 
