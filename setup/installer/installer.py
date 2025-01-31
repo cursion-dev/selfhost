@@ -186,7 +186,7 @@ def setup(
     
         else:
             # incorrect key
-            license_key = None
+            license_key = ''
             rprint(
                 '[red bold]' +
                 '[✘]' +
