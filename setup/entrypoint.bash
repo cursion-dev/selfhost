@@ -140,8 +140,13 @@ fi
 # --- 3. Run python installer to get user inputs --- #
 echo 'Setting up installer'
 
-# Install Python requirements (allow --break-system-packages if needed)
-pip3 install --user --break-system-packages -r ./setup/installer/requirements.txt
+# Install Python requirements 
+pip3 install \
+    --user \
+    --break-system-packages \
+    --no-warn-script-location \
+    --root-user-action=ignore \
+    -r ./setup/installer/requirements.txt
 
 echo 'Starting installer script'
 
