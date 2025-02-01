@@ -19,7 +19,7 @@ set -u  # Treat unset variables as errors
 # 4. admin_pass    ($4)
 # 5. server_domain ($5)
 # 6. client_domain ($6)
-# 7. gpt_key       ($7) - optional
+# 7. gpt_key       ($7)
 
 
 
