@@ -320,54 +320,58 @@ def setup(
     # get OpenAI API key
     while not gpt_confirmed:
 
+        # get 'gpt_confirmed'
+        gpt_confirmed = True if len(gpt_key) > 0 else False
+
         # ask for optional gpt key
-        add_gpt_key = False
-        if len(gpt_key) == 0:
+        if not gpt_confirmed:
             add_gpt_key = typer.confirm(
                 text=f'  Would you like to use your own OpenAI API Key?', 
             )
         
-        # ask for key
-        if add_gpt_key or len(gpt_key) == 0:
-            if len(gpt_key) == 0:
+            # ask for key
+            if add_gpt_key:
                 gpt_key = typer.prompt(
                     text='  Enter your OpenAI API Key', 
                     hide_input=True
                 )
 
-            # check key
-            if len(gpt_key) > 0:
-
-                # update server vars
-                SERVER_VARS['GPT_API_KEY'] = gpt_key
-
-                # confirm key
+            # not updating OpenAI keys
+            if not add_gpt_key:
                 gpt_confirmed = True
                 rprint(
                     '[green bold]' +
                     '[✓]' +
                     '[/green bold]'+
-                    f" OpenAI key added"
+                    f" Using default OpenAI key"
                 )
-            
-            if len(gpt_key) == 0:
-                # incorrect key
-                rprint(
-                    '[red bold]' +
-                    '[✘]' +
-                    '[/red bold]' +
-                    ' OpenAI key missing'
-                )
-        
-        else:
-            # not updating OpenAI keys
+                break
+
+        # check key
+        if len(gpt_key) > 0:
+
+            # update server vars
+            SERVER_VARS['GPT_API_KEY'] = gpt_key
+
+            # confirm key
             gpt_confirmed = True
             rprint(
                 '[green bold]' +
                 '[✓]' +
                 '[/green bold]'+
-                f" Using default OpenAI key"
+                f" OpenAI key added"
             )
+        
+        if len(gpt_key) == 0:
+            # incorrect key
+            rprint(
+                '[red bold]' +
+                '[✘]' +
+                '[/red bold]' +
+                ' OpenAI key missing'
+            )
+        
+        
 
 
     # update CLIENT .env with new data
