@@ -28,6 +28,13 @@ echo 'Setting up host environment'
 
 # Set default vars
 USR="cursion"
+SYS_PASS="${1:-}"
+LICENSE_KEY="${2:-}"
+ADMIN_EMAIL="${3:-}"
+ADMIN_PASS="${4:-}"
+SERVER_DOMAIN="${5:-}"
+CLIENT_DOMAIN="${6:-}"
+GPT_KEY="${7:-}"
 
 # Check for root execution
 if [ "$(id -u)" -ne 0 ]; then
@@ -42,16 +49,15 @@ fi
 
 # Create password for cursion user using dialog
 # if sys_pass was not give in args
-if [ -z "$1" ]; then
-    USER_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Create a password for the cursion user" 8 40 2>&1 >/dev/tty)
-    USER_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "Confirm the password" 8 40 2>&1 >/dev/tty)
+if [ -z "$SYS_PASS" ]; then
+    SYS_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Create a password for the cursion user" 8 40 2>&1 >/dev/tty)
+    SYS_PASS_CONFIRM=$(dialog --title "Password Confirmation" --clear --insecure --passwordbox "Confirm the password" 8 40 2>&1 >/dev/tty)
 else
-    USER_PASS=$1
-    USER_PASS_CONFIRM=$1
+    SYS_PASS_CONFIRM=$SYS_PASS
 fi
 
 # Match password
-if [[ "$USER_PASS" != "$USER_PASS_CONFIRM" ]]; then
+if [[ "$SYS_PASS" != "$SYS_PASS_CONFIRM" ]]; then
     echo "Passwords do not match. Exiting..."
     exit 1
 fi
@@ -98,6 +104,12 @@ usermod -aG docker $USR
 # Reset default vars
 USR="cursion"
 REPOSITORY="https://github.com/cursion-dev/selfhost.git"
+LICENSE_KEY="${2:-}"
+ADMIN_EMAIL="${3:-}"
+ADMIN_PASS="${4:-}"
+SERVER_DOMAIN="${5:-}"
+CLIENT_DOMAIN="${6:-}"
+GPT_KEY="${7:-}"
 
 
 
@@ -135,12 +147,12 @@ echo 'Starting installer script'
 
 # Run installer.py setup script explicitly with Python
 python3 ./setup/installer/installer.py \
-    --license-key="$2" \
-    --admin-email="$3" \
-    --admin-pass="$4" \
-    --server-domain="$5" \
-    --client-domain="$6" \
-    --gpt-key="$7" -- </dev/tty
+    --license-key="$LICENSE_KEY" \
+    --admin-email="$ADMIN_EMAIL" \
+    --admin-pass="$ADMIN_PASS" \
+    --server-domain="$SERVER_DOMAIN" \
+    --client-domain="$CLIENT_DOMAIN" \
+    --gpt-key="$GPT_KEY" -- </dev/tty
 
 
 
