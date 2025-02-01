@@ -323,29 +323,12 @@ def setup(
         # get 'gpt_confirmed'
         gpt_confirmed = True if len(gpt_key) > 0 else False
 
-        # ask for optional gpt key
+        # ask for key
         if not gpt_confirmed:
-            add_gpt_key = typer.confirm(
-                text=f'  Would you like to use your own OpenAI API Key?', 
+            gpt_key = typer.prompt(
+                text='  Enter your OpenAI API Key', 
+                hide_input=True
             )
-        
-            # ask for key
-            if add_gpt_key:
-                gpt_key = typer.prompt(
-                    text='  Enter your OpenAI API Key', 
-                    hide_input=True
-                )
-
-            # not updating OpenAI keys
-            if not add_gpt_key:
-                gpt_confirmed = True
-                rprint(
-                    '[green bold]' +
-                    '[✓]' +
-                    '[/green bold]'+
-                    f" Using default OpenAI key"
-                )
-                break
 
         # check key
         if len(gpt_key) > 0:
