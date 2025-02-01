@@ -66,7 +66,7 @@ echo "Cursion password created!"
 # Create user and set password
 if ! id -u $USR &>/dev/null; then
     useradd -m $USR
-    echo "$USR:$USER_PASS" | chpasswd
+    echo "$USR:$SYS_PASS" | chpasswd
     usermod -aG sudo $USR
 else
     echo "User $USR already exists"
