@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### - Update Script for Self-Hosted Cursion - ###
-# This script will stop, update, re-deploy, and preform 
+# This script will stop, update, re-deploy, and perform 
 # cleanup for the Cursion application using Docker.
 
 
