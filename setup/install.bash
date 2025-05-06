@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### - Entry point for Self-Hosted Cursion - ###
+### - Install Script for Self-Hosted Cursion - ###
 # This script will download the self-hosted repo 
 # from GitHub and spin up the application using Docker.
 
@@ -169,17 +169,73 @@ echo 'Starting up services with Docker'
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
 # Start up services
-sudo -u $USR docker compose -f docker-compose.yml up --build -d
+sudo -u $USR docker compose -f docker-compose.yml up -d
 
 
 
 
-# --- 5. Display access directions --- #
+# --- 5. Wait until containers are fully up and running --- #
+echo "Waiting for Cursion to initialize..."
+
+# Set timeout limit
+TIMEOUT=600
+START_TIME=$(date +%s)
+
+# Wait for API to return status 200
 source ./env/.server.env
-echo "Cursion should be up and running in a few minutes!"
-echo "Access the Client App here -> ${CLIENT_URL_ROOT}/login"
-echo "Access the Server Admin Dashboard here -> ${API_URL_ROOT}/admin"
-echo "Use your admin credentials to login:  ${ADMIN_USER}  |  ${ADMIN_PASS}"
+
+while true; do
+    # Send a GET request to the /celery endpoint
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${API_URL_ROOT}/v1/ops/metrics/celery")
+
+    # If the response is 200, the containers are up and running
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo -e "\nAPI is up and containers are running!"
+        break
+    fi
+
+    # Check if we've exceeded the timeout
+    ELAPSED_TIME=$(($(date +%s) - $START_TIME))
+    PERCENTAGE=$((ELAPSED_TIME * 100 / TIMEOUT))
+
+    # Display progress bar
+    PROGRESS_BAR=$(printf "%-${PERCENTAGE}s" "#" | tr ' ' '#')
+    SPACES=$(printf "%-$((100 - PERCENTAGE))s")
+    echo -ne "\r[${PROGRESS_BAR}${SPACES}] ${PERCENTAGE}%"
+
+    # Check if the timeout has been reached
+    if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
+        echo -e "\nTimeout reached. Proceeding anyway."
+        break
+    fi
+
+    # Sleep for 10 seconds before retrying
+    sleep 10
+done
+
+
+
+
+# --- 6. Garbage collection --- #
+echo 'Performing cleanup...'
+
+# Remove dangling/unused resources
+docker image prune -f
+docker network prune -f
+docker container prune -f
+docker volume prune -f
+
+echo 'Cleanup finished!'
+
+
+
+
+# --- 7. Display access directions --- #
+source ./env/.server.env
+echo "Cursion should be up and running!"
+echo "Access the Client App here                : ${CLIENT_URL_ROOT}/login"
+echo "Access the Server Admin Dashboard here    : ${API_URL_ROOT}/admin"
+echo "Use your admin credentials to login       : ${ADMIN_USER} | ${ADMIN_PASS}"
 
 # Exit script
 exit 0
