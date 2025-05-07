@@ -7,7 +7,7 @@
 
 
 
-# set -e  # Exit immediately on command failure
+set -e  # Exit immediately on command failure
 set -u  # Treat unset variables as errors
 
 
@@ -24,7 +24,7 @@ set -u  # Treat unset variables as errors
 
 
 # --- 0. Setup environment --- #
-echo 'Setting up host environment'
+echo "Setting up host environment"
 
 # Set default vars
 USR="cursion"
@@ -76,7 +76,7 @@ fi
 
 
 # --- 1. Install system dependencies --- #
-echo 'Installing system dependencies'
+echo "Installing system dependencies"
 
 # Install dependencies
 apt-get update && apt-get install -y ca-certificates python3 python3-pip python3-venv curl git
@@ -115,7 +115,7 @@ GPT_KEY="${7:-}"
 
 
 # --- 2. Get self-hosted repo --- #
-echo 'Downloading Cursion Self-Hosted repo'
+echo "Downloading Cursion Self-Hosted repo"
 
 # Create cursion directory
 mkdir -p /home/$USR
@@ -138,7 +138,7 @@ fi
 
 
 # --- 3. Run python installer to get user inputs --- #
-echo 'Setting up installer'
+echo "Setting up installer"
 
 # Install Python requirements 
 pip3 install \
@@ -148,7 +148,7 @@ pip3 install \
     --root-user-action=ignore \
     -r ./setup/installer/requirements.txt
 
-echo 'Starting installer script'
+echo "Starting installer script"
 
 # Run installer.py setup script explicitly with Python
 python3 ./setup/installer/installer.py \
@@ -163,26 +163,19 @@ python3 ./setup/installer/installer.py \
 
 
 # --- 4. Spin up Cursion using Docker Compose --- #
-echo 'Starting up services with Docker'
+echo "Starting up Cursion with Docker Compose"
 
-# pulling images then creating and starting containers
-echo "[Step] Pulling latest images..."
-if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull; then
-    echo "[✗] Failed to pull images"
-    exit 1
-fi
+# pulling images 
+echo "[Step 1] Pulling latest images..."
+echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
 
-echo "[Step] Creating containers (no start)..."
-if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up --no-start; then
-    echo "[✗] Failed to create containers"
-    exit 1
-fi
+# creating containers
+echo "[Step 2] Creating containers (no start)..."
+echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up --no-start
 
-echo "[Step] Starting containers in detached mode..."
-if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d; then
-    echo "[✗] Failed to start containers"
-    exit 1
-fi
+# starting containers
+echo "[Step 3] Starting containers in detached mode..."
+echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d
 
 echo "[✓] Containers launched successfully."
 
@@ -200,14 +193,7 @@ SPINNER=('|' '/' '-' '\\')
 SPINNER_INDEX=0
 
 # Wait for API to return status 200
-if [ -f ./env/.server.env ]; then
-    set -a  # Export all sourced vars to env
-    source ./env/.server.env
-    set +a
-else
-    echo "[!] .server.env not found — skipping container status check."
-    exit 1
-fi
+source ./env/.server.env
 
 while true; do
     # Send a GET request to the /celery endpoint
@@ -243,7 +229,7 @@ done
 
 
 # --- 6. Garbage collection --- #
-echo 'Performing cleanup...'
+echo "Performing cleanup..."
 
 # Remove dangling/unused resources
 docker image prune -f
@@ -251,7 +237,7 @@ docker network prune -f
 docker container prune -f
 docker volume prune -f
 
-echo '[✓] Cleanup finished!'
+echo "[✓] Cleanup finished!"
 
 
 
@@ -259,9 +245,11 @@ echo '[✓] Cleanup finished!'
 # --- 7. Display access directions --- #
 source ./env/.server.env
 echo "[✓] Cursion should now be up and running!"
-echo " - Access the Client App here                ➔ ${CLIENT_URL_ROOT}/login"
-echo " - Access the Server Admin Dashboard here    ➔ ${API_URL_ROOT}/admin"
-echo " - Use your admin credentials to login       ➔ ${ADMIN_USER} | ${ADMIN_PASS}"
+echo " 1. Access the Client App here                ➔ ${CLIENT_URL_ROOT}/login"
+echo " 2. Access the Server Admin Dashboard here    ➔ ${API_URL_ROOT}/admin"
+echo " 3. Use your admin credentials to login:"
+echo "     username ➔ ${ADMIN_USER}"
+echo "     password ➔ ${ADMIN_PASS}"
 
 # Exit script
 exit 0
