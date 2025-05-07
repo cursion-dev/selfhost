@@ -168,11 +168,12 @@ echo 'Starting up services with Docker'
 # Add extra permissions for Docker commands
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
-# Pull images 
-sudo -u $USR docker compose -f docker-compose.yml pull
+echo 'Pulling Docker images...'
+sudo -u $USR docker compose -f docker-compose.yml pull || { echo "Docker Compose pull failed"; exit 1; }
 
-# Start containers
-sudo -u $USR docker compose -f docker-compose.yml up -d
+# Now start the containers
+echo 'Starting up containers with Docker Compose...'
+sudo -u $USR docker compose -f docker-compose.yml up -d || { echo "Docker Compose up failed"; exit 1; }
 
 
 
