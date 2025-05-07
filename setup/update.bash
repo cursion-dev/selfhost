@@ -88,14 +88,14 @@ while true; do
     ELAPSED_TIME=$(($(date +%s) - $START_TIME))
 
     # Display the spinner and wait for 1 second
-    echo -ne "\Waiting for Cursion to initialize... ${SPINNER[$SPINNER_INDEX]}"
+    echo -ne "\rWaiting for Cursion to initialize... ${SPINNER[$SPINNER_INDEX]}"
 
     # Update spinner index
     SPINNER_INDEX=$(( (SPINNER_INDEX + 1) % 4 ))
 
     # Check if the timeout has been reached
     if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
-        echo -e "\nTimeout reached. Proceeding anyway."
+        echo -e "\n[!] Timeout reached. Proceeding anyway."
         break
     fi
 
