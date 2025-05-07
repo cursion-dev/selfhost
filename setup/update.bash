@@ -24,7 +24,7 @@ USR="cursion"
 SYS_PASS="${1:-}"
 
 if [ -z "$SYS_PASS" ]; then
-    SYS_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Enter system password for sudo user $USR" 8 40 2>&1 >/dev/tty)
+    SYS_PASS=$(dialog --title "Password" --clear --insecure --passwordbox "Enter the system password for the cursion user" 8 40 2>&1 >/dev/tty)
 fi
 
 
@@ -62,11 +62,15 @@ echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d
 
 
 # --- 4. Wait until containers are fully up and running --- #
-echo "Waiting for API endpoint to be ready..."
+echo "Waiting for Cursion to initialize..."
 
-# Set a timeout limit to prevent hanging indefinitely (e.g., 10 minutes)
+# Set timeout limit
 TIMEOUT=600
 START_TIME=$(date +%s)
+
+# Spinner animation setup
+SPINNER=('|' '/' '-' '\\')
+SPINNER_INDEX=0
 
 # Wait for API to return status 200
 source ./env/.server.env
@@ -77,18 +81,18 @@ while true; do
 
     # If the response is 200, the containers are up and running
     if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo -e "\nAPI is up and containers are running!"
+        echo -e "\n[✓] API is up and containers are running!"
         break
     fi
 
     # Check if we've exceeded the timeout
     ELAPSED_TIME=$(($(date +%s) - $START_TIME))
-    PERCENTAGE=$((ELAPSED_TIME * 100 / TIMEOUT))
 
-    # Display progress bar
-    PROGRESS_BAR=$(printf "%-${PERCENTAGE}s" "#" | tr ' ' '#')
-    SPACES=$(printf "%-$((100 - PERCENTAGE))s")
-    echo -ne "\r[${PROGRESS_BAR}${SPACES}] ${PERCENTAGE}%"
+    # Display the spinner and wait for 1 second
+    echo -ne "\rWaiting... ${SPINNER[$SPINNER_INDEX]}"
+
+    # Update spinner index
+    SPINNER_INDEX=$(( (SPINNER_INDEX + 1) % 4 ))
 
     # Check if the timeout has been reached
     if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
@@ -96,8 +100,8 @@ while true; do
         break
     fi
 
-    # Sleep for 10 seconds before retrying
-    sleep 10
+    # Sleep for 1 second before retrying
+    sleep 1
 done
 
 
@@ -112,13 +116,14 @@ docker network prune -f
 docker container prune -f
 docker volume prune -f
 
-echo 'Cleanup finished!'
+echo '[✓] Cleanup finished!'
 
 
 
 
-# --- Final message --- #
-echo 'Update completed! Cursion is now running with the latest images.'
+# --- 6. Final message --- #
+echo '[✓] Update finished!'
+echo 'Cursion is now running with the latest stable version.'
 
 # Exit script
 exit 0

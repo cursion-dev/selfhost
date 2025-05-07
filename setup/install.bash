@@ -168,11 +168,8 @@ echo 'Starting up services with Docker'
 # Add extra permissions for Docker commands
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
-echo 'Pulling Docker images...'
+# pulling images and starting containers
 sudo -u $USR docker compose -f docker-compose.yml pull || { echo "Docker Compose pull failed"; exit 1; }
-
-# Now start the containers
-echo 'Starting up containers with Docker Compose...'
 sudo -u $USR docker compose -f docker-compose.yml up -d || { echo "Docker Compose up failed"; exit 1; }
 
 
@@ -185,6 +182,10 @@ echo "Waiting for Cursion to initialize..."
 TIMEOUT=600
 START_TIME=$(date +%s)
 
+# Spinner animation setup
+SPINNER=('|' '/' '-' '\\')
+SPINNER_INDEX=0
+
 # Wait for API to return status 200
 source ./env/.server.env
 
@@ -194,18 +195,18 @@ while true; do
 
     # If the response is 200, the containers are up and running
     if [ "$HTTP_STATUS" -eq 200 ]; then
-        echo -e "\nAPI is up and containers are running!"
+        echo -e "\n[✓] API is up and containers are running!"
         break
     fi
 
     # Check if we've exceeded the timeout
     ELAPSED_TIME=$(($(date +%s) - $START_TIME))
-    PERCENTAGE=$((ELAPSED_TIME * 100 / TIMEOUT))
 
-    # Display progress bar
-    PROGRESS_BAR=$(printf "%-${PERCENTAGE}s" "#" | tr ' ' '#')
-    SPACES=$(printf "%-$((100 - PERCENTAGE))s")
-    echo -ne "\r[${PROGRESS_BAR}${SPACES}] ${PERCENTAGE}%"
+    # Display the spinner and wait for 1 second
+    echo -ne "\rWaiting... ${SPINNER[$SPINNER_INDEX]}"
+
+    # Update spinner index
+    SPINNER_INDEX=$(( (SPINNER_INDEX + 1) % 4 ))
 
     # Check if the timeout has been reached
     if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
@@ -213,9 +214,10 @@ while true; do
         break
     fi
 
-    # Sleep for 10 seconds before retrying
-    sleep 10
+    # Sleep for 1 second before retrying
+    sleep 1
 done
+
 
 
 
@@ -229,17 +231,17 @@ docker network prune -f
 docker container prune -f
 docker volume prune -f
 
-echo 'Cleanup finished!'
+echo '[✓] Cleanup finished!'
 
 
 
 
 # --- 7. Display access directions --- #
 source ./env/.server.env
-echo "Cursion should be up and running!"
-echo "Access the Client App here                : ${CLIENT_URL_ROOT}/login"
-echo "Access the Server Admin Dashboard here    : ${API_URL_ROOT}/admin"
-echo "Use your admin credentials to login       : ${ADMIN_USER} | ${ADMIN_PASS}"
+echo "[✓] Cursion should now be up and running!"
+echo " - Access the Client App here                ➔ ${CLIENT_URL_ROOT}/login"
+echo " - Access the Server Admin Dashboard here    ➔ ${API_URL_ROOT}/admin"
+echo " - Use your admin credentials to login       ➔ ${ADMIN_USER} | ${ADMIN_PASS}"
 
 # Exit script
 exit 0
