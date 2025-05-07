@@ -18,7 +18,7 @@ set -u # Treat unset variables as errors
 
 
 # --- 0. Request or use system password --- #
-echo 'Requesting system password (for sudo operations)...'
+echo "Requesting system password (for sudo operations)..."
 
 USR="cursion"
 SYS_PASS="${1:-}"
@@ -31,7 +31,7 @@ fi
 
 
 # --- 1. Stop running containers --- #
-echo 'Stopping running containers...'
+echo "Stopping running containers..."
 
 # Navigate to home/user/selfhost directory
 cd /home/$USR/selfhost
@@ -52,7 +52,7 @@ echo "$SYS_PASS" | sudo -u $USR -S docker rmi -f cursiondev/client:latest cursio
 
 
 # --- 3. Re-pull and spin up the containers again --- #
-echo 'Pulling latest images and spinning up the deployment...'
+echo "Pulling latest images and spinning up the deployment..."
 
 # Re-pull the latest images and start the containers
 echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
@@ -107,7 +107,7 @@ done
 
 
 # --- 5. Garbage collection --- #
-echo 'Performing cleanup...'
+echo "Performing cleanup..."
 
 # Remove dangling/unused resources
 docker image prune -f
@@ -115,14 +115,14 @@ docker network prune -f
 docker container prune -f
 docker volume prune -f
 
-echo '[✓] Cleanup finished!'
+echo "[✓] Cleanup finished!"
 
 
 
 
 # --- 6. Final message --- #
-echo '[✓] Update finished!'
-echo 'Cursion is now running with the latest stable version.'
+echo "[✓] Update finished!"
+echo "Cursion is now running with the latest stable version."
 
 # Exit script
 exit 0
