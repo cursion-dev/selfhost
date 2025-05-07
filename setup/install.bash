@@ -7,7 +7,6 @@
 
 
 
-set -e  # Exit immediately on command failure
 set -u  # Treat unset variables as errors
 
 
