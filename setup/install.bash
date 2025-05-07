@@ -169,14 +169,13 @@ echo 'Starting up services with Docker'
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
 # pulling images and starting containers
-sudo -u $USR docker compose -f docker-compose.yml pull || { echo "Docker Compose pull failed"; exit 1; }
-sudo -u $USR docker compose -f docker-compose.yml up -d || { echo "Docker Compose up failed"; exit 1; }
+echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
+echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d 
 
 
 
 
 # --- 5. Wait until containers are fully up and running --- #
-echo "Waiting for Cursion to initialize..."
 
 # Set timeout limit
 TIMEOUT=600
@@ -203,7 +202,7 @@ while true; do
     ELAPSED_TIME=$(($(date +%s) - $START_TIME))
 
     # Display the spinner and wait for 1 second
-    echo -ne "\rWaiting... ${SPINNER[$SPINNER_INDEX]}"
+    echo -ne "\rWaiting for Cursion to initialize... ${SPINNER[$SPINNER_INDEX]}"
 
     # Update spinner index
     SPINNER_INDEX=$(( (SPINNER_INDEX + 1) % 4 ))
