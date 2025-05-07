@@ -7,7 +7,7 @@
 
 
 
-set -e  # Exit immediately on command failure
+# set -e  # Exit immediately on command failure
 set -u  # Treat unset variables as errors
 
 
@@ -165,12 +165,26 @@ python3 ./setup/installer/installer.py \
 # --- 4. Spin up Cursion using Docker Compose --- #
 echo 'Starting up services with Docker'
 
-# Add extra permissions for Docker commands
-echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
+# pulling images then creating and starting containers
+echo "[Step] Pulling latest images..."
+if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull; then
+    echo "[✗] Failed to pull images"
+    exit 1
+fi
 
-# pulling images and starting containers
-echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
-echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d 
+echo "[Step] Creating containers (no start)..."
+if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up --no-start; then
+    echo "[✗] Failed to create containers"
+    exit 1
+fi
+
+echo "[Step] Starting containers in detached mode..."
+if ! echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up -d; then
+    echo "[✗] Failed to start containers"
+    exit 1
+fi
+
+echo "[✓] Containers launched successfully."
 
 
 
