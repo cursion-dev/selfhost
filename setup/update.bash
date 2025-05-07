@@ -52,7 +52,7 @@ echo "$SYS_PASS" | sudo -u $USR -S docker rmi -f cursiondev/client:latest cursio
 
 
 # --- 3. Re-pull and spin up the containers again --- #
-echo 'Re-pulling latest images and spinning up the deployment...'
+echo 'Pulling latest images and spinning up the deployment...'
 
 # Re-pull the latest images and start the containers
 echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
