@@ -186,7 +186,14 @@ SPINNER=('|' '/' '-' '\\')
 SPINNER_INDEX=0
 
 # Wait for API to return status 200
-source ./env/.server.env
+if [ -f ./env/.server.env ]; then
+    set -a  # Export all sourced vars to env
+    source ./env/.server.env
+    set +a
+else
+    echo "[!] .server.env not found — skipping container status check."
+    exit 1
+fi
 
 while true; do
     # Send a GET request to the /celery endpoint
@@ -209,7 +216,7 @@ while true; do
 
     # Check if the timeout has been reached
     if [ "$ELAPSED_TIME" -ge "$TIMEOUT" ]; then
-        echo -e "\nTimeout reached. Proceeding anyway."
+        echo -e "\n[!] Timeout reached. Proceeding anyway."
         break
     fi
 
