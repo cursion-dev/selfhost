@@ -168,7 +168,10 @@ echo 'Starting up services with Docker'
 # Add extra permissions for Docker commands
 echo "%docker ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
-# Start up services
+# Pull images 
+sudo -u $USR docker compose -f docker-compose.yml pull
+
+# Start containers
 sudo -u $USR docker compose -f docker-compose.yml up -d
 
 
