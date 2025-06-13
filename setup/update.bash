@@ -44,8 +44,9 @@ echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml down
 # --- 2. Remove outdated images --- #
 echo 'Removing outdated Docker images...'
 
-# Remove the cursiondev client and server images
+# Remove the cursiondev client and server images & volumes
 echo "$SYS_PASS" | sudo -u $USR -S docker rmi -f cursiondev/client:latest cursiondev/server:latest
+echo "$SYS_PASS" | sudo -u $USR -S docker rm -f cursion_celery cursion_beat cursion_server
 
 
 
