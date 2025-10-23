@@ -124,21 +124,22 @@ def setup(
     """
 
     # set defaults
-    verified = False
-    admin_confirmed = False
-    domains_confirmed = False
-    gpt_confirmed = False
-    headers = {'content-type': 'application/json'}
+    verified            = False
+    admin_confirmed     = False
+    domains_confirmed   = False
+    gpt_confirmed       = False
+    headers             = {'content-type': 'application/json'}
 
     # generate keys and passwords
     # db_password = 'supersecretpassword' # -> fake/temp for debugging
     db_password = secrets.token_urlsafe(16)
-    random_key = secrets.token_bytes(32)
-    secret_key = base64.urlsafe_b64encode(random_key).decode('utf-8')
+    random_key  = secrets.token_bytes(32)
+    secret_key  = base64.urlsafe_b64encode(random_key).decode('utf-8')
     
     # update SERVER vars
     SERVER_VARS['DB_PASS']           = db_password
     SERVER_VARS['POSTGRES_PASSWORD'] = db_password
+    SERVER_VARS['SECRET_KEY']        = f'django-insecure-{secret_key}'
     SERVER_VARS['SECRETS_KEY']       = secret_key
 
 
@@ -202,9 +203,9 @@ def setup(
         )
     
     # update email and add username
-    SERVER_VARS['ADMIN_USER'] = 'admin'
-    SERVER_VARS['ADMIN_EMAIL'] = admin_email
-    SERVER_VARS['DEFAULT_EMAIL'] = admin_email
+    SERVER_VARS['ADMIN_USER']        = 'admin'
+    SERVER_VARS['ADMIN_EMAIL']       = admin_email
+    SERVER_VARS['DEFAULT_EMAIL']     = admin_email
     SERVER_VARS['LETSENCRYPT_EMAIL'] = admin_email
     CLIENT_VARS['LETSENCRYPT_EMAIL'] = admin_email
 
