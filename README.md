@@ -6,4 +6,4 @@ This is the self-hosted repo for the Cursion Platform - ✨ Compicated Web Testi
 
 ### 💻 [Installation Guide](https://docs.cursion.dev/guides/selfhost.html)
 
-Copyright © Grey Labs, LLC 2025
+Copyright © Grey Labs, LLC 2026
