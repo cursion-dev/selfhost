@@ -88,7 +88,7 @@ welcome = (
          \_____|\____/|_|  \_\_____/|_____\____/|_| \_|
         
     Welcome to Cursion!
-    © Grey Labs, LLC 2025
+    © Grey Labs, LLC 2026
 
     =======================================================
     """
@@ -111,16 +111,16 @@ def setup(
     Setup and configure env's for Client and Server.
     Args are optional, but all must be passed together.
 
-    Expects: {
+    Args:
         license_key    : str (OPTIONAL),
         admin_email    : str (OPTIONAL),
         admin_pass     : str (OPTIONAL),
         server_domain  : str (OPTIONAL),
         client_domain  : str (OPTIONAL),
         gpt_key        : str (OPTIONAL)
-    }
 
-    Return: None
+    Returns:
+        None
     """
 
     # set defaults
