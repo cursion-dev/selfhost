@@ -18,7 +18,8 @@ set -u  # Treat unset variables as errors
 # 4. admin_pass    ($4)
 # 5. server_domain ($5)
 # 6. client_domain ($6)
-# 7. gpt_key       ($7)
+# 7. mcp_domain    ($7)
+# 8. gpt_key       ($8)
 
 
 
@@ -33,7 +34,8 @@ ADMIN_EMAIL="${3:-}"
 ADMIN_PASS="${4:-}"
 SERVER_DOMAIN="${5:-}"
 CLIENT_DOMAIN="${6:-}"
-GPT_KEY="${7:-}"
+MCP_DOMAIN="${7:-}"
+GPT_KEY="${8:-}"
 
 # Check for root execution
 if [ "$(id -u)" -ne 0 ]; then
@@ -108,7 +110,8 @@ ADMIN_EMAIL="${3:-}"
 ADMIN_PASS="${4:-}"
 SERVER_DOMAIN="${5:-}"
 CLIENT_DOMAIN="${6:-}"
-GPT_KEY="${7:-}"
+MCP_DOMAIN="${7:-}"
+GPT_KEY="${8:-}"
 
 
 
@@ -156,6 +159,7 @@ python3 ./setup/installer/installer.py \
     --admin-pass="$ADMIN_PASS" \
     --server-domain="$SERVER_DOMAIN" \
     --client-domain="$CLIENT_DOMAIN" \
+    --mcp-domain="$MCP_DOMAIN" \
     --gpt-key="$GPT_KEY" -- </dev/tty
 
 
@@ -169,7 +173,7 @@ echo "[Step 1] Pulling latest images..."
 echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml pull
 
 # creating containers
-echo "[Step 2] Creating containers (no start)..."
+echo "[Step 2] Creating containers..."
 echo "$SYS_PASS" | sudo -u $USR -S docker compose -f docker-compose.yml up --no-start
 
 # starting containers
@@ -246,7 +250,8 @@ source ./env/.server.env
 echo "[✓] Cursion should now be up and running!"
 echo " 1. Access the Client App here                ➔ ${CLIENT_URL_ROOT}/login"
 echo " 2. Access the Server Admin Dashboard here    ➔ ${API_URL_ROOT}/admin"
-echo " 3. Use your admin credentials to login:"
+echo " 3. Access the MCP Server here                ➔ ${MCP_URL_ROOT}/sse"
+echo " 4. Use your admin credentials to login:"
 echo "     username ➔ ${ADMIN_USER}"
 echo "     password ➔ ${ADMIN_PASS}"
 

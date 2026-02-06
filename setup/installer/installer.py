@@ -14,6 +14,7 @@ local           = '/home/cursion/selfhost' # testing path -> f'{Path.home()}/doc
 env_dir         = Path(f'{local}/env')
 env_client      = Path(f'{local}/env/.client.env')
 env_server      = Path(f'{local}/env/.server.env')
+env_mcp         = Path(f'{local}/env/.mcp.env')
 cursion_root    = 'https://api.cursion.dev'
 
 
@@ -66,6 +67,19 @@ CLIENT_VARS = {
 }
 
 
+MCP_VARS = {
+
+    # retrieved from user input
+    'API_ROOT_URL'          : '',
+    'CLIENT_ROOT_URL'       : '',
+    'LETSENCRYPT_EMAIL'     : '',
+    'LETSENCRYPT_HOST'      : '',
+    'VIRTUAL_HOST'          : '',
+    'DOMAIN'                : '',
+    'EMAIL'                 : '',
+}
+
+
 
 
 welcome = (
@@ -104,6 +118,7 @@ def setup(
         admin_pass      : str='',
         server_domain   : str='',
         client_domain   : str='',
+        mcp_domain      : str='',
         gpt_key         : str=''
     ) -> None:
 
@@ -117,6 +132,7 @@ def setup(
         admin_pass     : str (OPTIONAL),
         server_domain  : str (OPTIONAL),
         client_domain  : str (OPTIONAL),
+        mcp_domain     : str (OPTIONAL),
         gpt_key        : str (OPTIONAL)
 
     Returns:
@@ -208,6 +224,8 @@ def setup(
     SERVER_VARS['DEFAULT_EMAIL']     = admin_email
     SERVER_VARS['LETSENCRYPT_EMAIL'] = admin_email
     CLIENT_VARS['LETSENCRYPT_EMAIL'] = admin_email
+    MCP_VARS['LETSENCRYPT_EMAIL']    = admin_email
+    MCP_VARS['EMAIL']                = admin_email
 
 
     # get admin password inputs
@@ -277,23 +295,33 @@ def setup(
                 text='  Enter your Client domain (e.g. app.example.com)', 
             )
 
-        # clean urls
-        server_domain = server_domain.replace('/','')
-        client_domain = client_domain.replace('/','')
-        server_url = f'https://{server_domain}'
-        client_url = f'https://{client_domain}'
+        # ask for mcp domain name
+        if len(mcp_domain) == 0:
+            mcp_domain = typer.prompt(
+                text='  Enter your MCP domain (e.g. mcp.example.com)', 
+            )
+
+        # clean domains & urls
+        server_domain   = server_domain.replace('/','')
+        client_domain   = client_domain.replace('/','')
+        mcp_domain      = mcp_domain.replace('/','')
+
+        server_url  = f'https://{server_domain}'
+        client_url  = f'https://{client_domain}'
+        mcp_url     = f'https://{mcp_domain}'
 
 
         # ask for CLIENT url change request
         if not domains_confirmed:
             domains_confirmed = typer.confirm(
-                text=f'  Does this look correct?  ({server_url})  ({client_url}) ', 
+                text=f'  Does this look correct?  ({server_url})  ({client_url})  ({mcp_url})', 
             )
         
         # reset values
         if not domains_confirmed:
-            server_domain = ''
-            client_domain = ''
+            server_domain   = ''
+            client_domain   = ''
+            mcp_domain      = ''
 
         # check if correct
         if domains_confirmed:
@@ -301,6 +329,7 @@ def setup(
             # update SERVER vars
             SERVER_VARS['CLIENT_URL_ROOT']  = client_url
             SERVER_VARS['API_URL_ROOT']     = server_url
+            SERVER_VARS['MCP_URL_ROOT']     = mcp_url
             SERVER_VARS['LETSENCRYPT_HOST'] = server_domain
             SERVER_VARS['VIRTUAL_HOST']     = server_domain
             
@@ -309,6 +338,14 @@ def setup(
             CLIENT_VARS['REACT_APP_CLIENT_URL'] = client_url
             CLIENT_VARS['LETSENCRYPT_HOST']     = client_domain
             CLIENT_VARS['VIRTUAL_HOST']         = client_domain
+
+            # update MCP vars
+            MCP_VARS['API_ROOT_URL']     = server_url
+            MCP_VARS['CLIENT_ROOT_URL']  = client_url
+            MCP_VARS['DOMAIN']           = mcp_domain
+            MCP_VARS['LETSENCRYPT_HOST'] = mcp_domain
+            MCP_VARS['VIRTUAL_HOST']     = mcp_domain
+            
 
             rprint(
                 '[green bold]' +
@@ -363,6 +400,9 @@ def setup(
 
     # update SERVER .env with new data
     update_env(str(env_server), SERVER_VARS)
+
+    # update MCP .env with new data
+    update_env(str(env_mcp), MCP_VARS)
     
     # print response
     rprint(
@@ -381,38 +421,53 @@ def update_env(env_path: str, variables: dict) -> None:
     """
     Updates or adds variables in the passed .env 
     file while preserving unchanged lines.
+
+    Args:
+        env_path  : str
+        variables : dict
+    
+    Returns:
+        None
     """
-    # Read the current .env file content into memory
+   
+    # load current .env
     with open(env_path, 'r') as file:
         lines = file.readlines()
 
-    # Track variables that have been updated or added
+    # defaults
     updated_keys = set()
-
-    # Prepare the updated content
     updated_lines = []
 
+    # loop through each line 
     for line in lines:
-        # Check if the line contains a key-value pair
+        
+        # check if the line contains a key-value pair
         if '=' in line and not line.startswith('#'):
+            
+            # extract key from line
             key, _ = line.strip().split('=', 1)
+            
+            # check for key existance in ENV dict
             if key in variables:
-                # Update the variable
+                
+                # update with new value
                 updated_lines.append(f'{key}={variables[key]}\n')
                 updated_keys.add(key)
+            
             else:
-                # Preserve the existing variable
+                # preserve existing
                 updated_lines.append(line)
+        
         else:
-            # Preserve comments and empty lines
+            # preserve spacing
             updated_lines.append(line)
 
-    # Add any new variables that were not in the original file
+    # append new values not in .env
     for key, value in variables.items():
         if key not in updated_keys:
             updated_lines.append(f'{key}={value}\n')
 
-    # Write the updated content back to the .env file
+    # write updates to .env file
     with open(env_path, 'w') as file:
         file.writelines(updated_lines)
 

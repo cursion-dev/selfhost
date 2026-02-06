@@ -8,10 +8,25 @@ services:
     image: cursiondev/client:latest
     platform: linux/amd64
     pull_policy: always
+    restart: always
     env_file:
       - ./env/.client.env
     expose:
       - "8080"
+
+
+  mcp:
+    container_name: cursion-mcp
+    hostname: cursion-mcp
+    image: cursiondev/mcp:latest
+    platform: linux/amd64
+    pull_policy: always
+    restart: unless-stopped
+    entrypoint: ["/entrypoint.sh", "remote"]
+    expose:
+      - "8100"
+    env_file:
+      - ./env/.mcp.env
 
 
   server:
@@ -57,19 +72,38 @@ services:
       - "6379"
 
 
-  celery:
-    container_name: cursion-celery
+  celery-scheduled:
+    container_name: cursion-celery-scheduled
     hostname: cursion-celery
     image: cursiondev/server:latest
     platform: linux/amd64
     pull_policy: always
     privileged: true
     restart: always
-    entrypoint: ["/entrypoint.sh", "celery"]
+    entrypoint: ["/entrypoint.sh", "celery", "scheduled"]
     env_file:
       - ./env/.server.env
     volumes:
-      - celery:/app
+      - celery_scheduled:/app
+    depends_on:
+      - redis
+      - server
+      - db
+
+
+  celery-on-demand:
+    container_name: cursion-celery-on-demand
+    hostname: cursion-celery
+    image: cursiondev/server:latest
+    platform: linux/amd64
+    pull_policy: always
+    privileged: true
+    restart: always
+    entrypoint: ["/entrypoint.sh", "celery", "on-demand"]
+    env_file:
+      - ./env/.server.env
+    volumes:
+      - celery_on_demand:/app
     depends_on:
       - redis
       - server
@@ -132,6 +166,7 @@ services:
     depends_on:
       - server
       - client
+      - mcp
   
   
   nginx-proxy-letsencrypt:
@@ -140,8 +175,6 @@ services:
     image: nginxproxy/acme-companion
     platform: linux/amd64
     privileged: true
-    env_file:
-      - ./env/.server.env
     volumes:
       - certs:/etc/nginx/certs
       - html:/usr/share/nginx/html
@@ -155,7 +188,8 @@ services:
 volumes:
   server:
   static_volume:
-  celery:
+  celery_scheduled:
+  celery_on_demand:
   beat:
   letsencrypt-acme:
   pgdata:
