@@ -99,7 +99,7 @@ services:
     pull_policy: always
     privileged: true
     restart: always
-    entrypoint: ["/entrypoint.sh", "celery", "on-demand"]
+    entrypoint: ["/entrypoint.sh", "celery", "on_demand"]
     env_file:
       - ./env/.server.env
     volumes:
@@ -126,23 +126,6 @@ services:
     depends_on:
       - redis
       - celery
-      - server
-      - db
-
-
-  yellowlab:
-    container_name: yellowlab
-    hostname: yellowlab
-    image: cursiondev/ylt
-    pull_policy: always
-    platform: linux/amd64
-    privileged: true
-    restart: always
-    ports:
-      - "8383:8383"
-    depends_on:
-      - redis
-      - celery 
       - server
       - db
 
